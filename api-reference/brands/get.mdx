@@ -1,7 +1,7 @@
 ---
-title: "Get Brand Profile and Top Fragrances"
+title: "Get Fragrance Brand Profile and Top Fragrances"
 sidebarTitle: "Get Brand"
-description: "GET /v1/brands/{slug} — Fetch a brand's profile including description, country, and its highest-rated fragrances."
+description: "GET /v1/brands/{slug} — Fetch a brand's full profile including name, country, editorial description, and highest-rated fragrances on Noteboxd. Costs 1¢ per call."
 ---
 
 The brand profile endpoint returns everything you need to present a fragrance house in your application: a human-readable name, country of origin, editorial description, and a curated list of the brand's highest-rated fragrances on Noteboxd. Use it to build brand landing pages, enrich fragrance cards with house context, or populate "About the Brand" sections in your UI.
@@ -43,6 +43,10 @@ curl https://api.noteboxd.com/v1/brands/chanel \
   ]
 }
 ```
+
+<Warning>
+  If the `slug` does not match any known brand, the API returns a `404` response with error code `NOT_FOUND`. Obtain valid slugs from the universal search endpoint using `type=brand`.
+</Warning>
 
 <Note>
   The `topFragrances` array returns the brand's highest-scored fragrances, not its full catalogue. To paginate through every fragrance a brand offers, use `GET /v1/brands/{slug}/fragrances`.

@@ -1,7 +1,7 @@
 ---
-title: "Get Note Profile and Top Fragrances"
+title: "Get Olfactory Note Profile and Top Fragrances"
 sidebarTitle: "Get Note"
-description: "GET /v1/notes/{slug} — Retrieve an olfactory note's profile, family, description, and top fragrances that feature it."
+description: "GET /v1/notes/{slug} — Retrieve an olfactory note's full profile including family classification, editorial description, and top-rated fragrances featuring it. Costs 1¢ per call."
 ---
 
 The note profile endpoint gives you a rich, detailed view of a single olfactory ingredient — its olfactory family classification, an editorial description of its scent character, and the top-rated Noteboxd fragrances that feature it prominently. Use this data to build note detail pages, enrich fragrance ingredient lists with educational context, or power "fragrances with this note" recommendation modules.
@@ -43,6 +43,10 @@ curl https://api.noteboxd.com/v1/notes/oud \
   ]
 }
 ```
+
+<Warning>
+  If the `slug` does not match any known note, the API returns a `404` response with error code `NOT_FOUND`. Obtain valid slugs from `GET /v1/notes` or the universal search endpoint using `type=note`.
+</Warning>
 
 <Note>
   The `topFragrances` array surfaces the highest-rated Noteboxd fragrances that list this note in their pyramid. It is not an exhaustive list of every fragrance containing the note — use the universal search endpoint with `q={note name}` and `type=fragrance` for broader discovery.

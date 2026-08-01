@@ -1,7 +1,7 @@
 ---
-title: "Universal Search — Fragrances, Brands, Notes, Perfumers"
+title: "Universal Search Across Fragrances, Brands & Notes"
 sidebarTitle: "Search"
-description: "GET /v1/search — Cross-entity keyword search returning fragrances, brands, notes, perfumers, and collections. Costs 1¢ per call."
+description: "GET /v1/search — Cross-entity keyword search returning fragrances, brands, notes, perfumers, and collections in a single ranked results array. Costs 1¢ per call."
 ---
 
 The universal search endpoint lets you query the entire Noteboxd catalog with a single keyword string. Results are ranked by relevance and can span fragrances, brands, olfactory notes, perfumers, and curated collections. Use the optional `type` filter to narrow results to a single entity kind when you already know what you're looking for.
@@ -26,7 +26,7 @@ GET /v1/search
   Filter results to a single entity type. Accepted values: `fragrance`, `note`, `brand`, `perfumer`, `collection`. When omitted, all entity types are returned.
 </ParamField>
 
-<ParamField query="limit" type="integer" required>
+<ParamField query="limit" type="integer">
   Maximum number of results to return. Defaults to `20`. Minimum `1`, maximum `25`.
 </ParamField>
 

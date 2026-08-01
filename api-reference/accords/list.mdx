@@ -1,7 +1,7 @@
 ---
-title: "List Fragrance Accord Families"
+title: "List All Fragrance Accord Families — Slugs & Names"
 sidebarTitle: "List Accords"
-description: "GET /v1/accords — Retrieve all accord families used in fragrance classification, with names and slugs for filtering."
+description: "GET /v1/accords — Retrieve all accord families used in fragrance classification, with stable slugs and display names for filters and UI labels. Costs 1¢ per call."
 ---
 
 Accords are named blend families — woody, floral, oriental, fresh, gourmand, and more — that characterize a fragrance's overall scent profile. Unlike individual notes, which describe specific ingredients, accords describe the combined character of a composition. Each fragrance on Noteboxd carries one or more accords with relative strength values, making them excellent facets for discovery filters and scent-preference matching. Use this endpoint to fetch the full list of accord slugs and names you can display in your UI.
@@ -18,11 +18,11 @@ GET /v1/accords
 
 ## Query Parameters
 
-<ParamField query="page" type="integer" required>
+<ParamField query="page" type="integer">
   The page of results to return. Defaults to `1`.
 </ParamField>
 
-<ParamField query="limit" type="integer" required>
+<ParamField query="limit" type="integer">
   Number of accords to return per page. Defaults to `20`. Maximum `50`.
 </ParamField>
 

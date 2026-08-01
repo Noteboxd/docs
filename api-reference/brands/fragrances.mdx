@@ -1,7 +1,7 @@
 ---
-title: "List Brand Fragrance Catalogue — Paginated"
+title: "List a Brand's Full Fragrance Catalogue — Paginated"
 sidebarTitle: "Brand Fragrances"
-description: "GET /v1/brands/{slug}/fragrances — Browse the full paginated fragrance catalogue for a specific brand."
+description: "GET /v1/brands/{slug}/fragrances — Browse the complete paginated fragrance catalogue for a specific brand, from flagship classics to limited editions. Costs 1¢ per call."
 ---
 
 This endpoint returns the complete fragrance catalogue for a given brand, paginated for easy consumption. Unlike the `topFragrances` array on the brand profile, this listing is exhaustive — covering every fragrance Noteboxd has on record for that house, from flagship classics to limited editions. Use it to build brand catalogue pages, power autocomplete filters, or sync a brand's full inventory into your own database.
@@ -24,11 +24,11 @@ GET /v1/brands/{slug}/fragrances
 
 ## Query Parameters
 
-<ParamField query="page" type="integer" required>
+<ParamField query="page" type="integer">
   The page of results to return. Defaults to `1`. Use in conjunction with `limit` to paginate through the full catalogue.
 </ParamField>
 
-<ParamField query="limit" type="integer" required>
+<ParamField query="limit" type="integer">
   Number of fragrances to return per page. Defaults to `20`. Maximum `50`.
 </ParamField>
 

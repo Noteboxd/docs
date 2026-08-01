@@ -1,7 +1,7 @@
 ---
-title: "Get Perfumer Profile and Top Creations"
+title: "Get Perfumer Profile, Biography, and Top Creations"
 sidebarTitle: "Get Perfumer"
-description: "GET /v1/perfumers/{slug} — Retrieve a perfumer's profile, biography, and top-rated fragrance creations."
+description: "GET /v1/perfumers/{slug} — Retrieve a perfumer's full profile including biography, nationality, and their highest-rated fragrance creations on Noteboxd. Costs 1¢ per call."
 ---
 
 The perfumer profile endpoint returns biographical information about a fragrance creator alongside their highest-rated works on Noteboxd. Perfumers are the artists behind the scents, and surfacing their stories enriches fragrance content considerably — use this endpoint to build perfumer spotlight pages, add "Created by" attribution on fragrance detail views, or power explore-by-nose journeys through your catalog.
@@ -42,6 +42,10 @@ curl https://api.noteboxd.com/v1/perfumers/francis-kurkdjian \
   ]
 }
 ```
+
+<Warning>
+  If the `slug` does not match any known perfumer, the API returns a `404` response with error code `NOT_FOUND`. Obtain valid slugs from the universal search endpoint using `type=perfumer`.
+</Warning>
 
 <Note>
   The `topCreations` array contains the perfumer's highest-scored works as rated by the Noteboxd community. A perfumer may have contributed to many more fragrances than are listed here — cross-reference with `GET /v1/search` using the perfumer's name for a broader view.

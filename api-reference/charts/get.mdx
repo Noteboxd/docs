@@ -1,7 +1,7 @@
 ---
-title: "Get Chart Leaderboard by Slug"
+title: "Get Ranked Chart Leaderboard by Slug"
 sidebarTitle: "Get Chart"
-description: "GET /v1/charts/{slug} — Retrieve the full ranked leaderboard for a specific chart. Returns ordered fragrance entries with rank and score."
+description: "GET /v1/charts/{slug} — Retrieve the full ranked leaderboard for a specific chart. Returns ordered fragrance entries with rank, name, brand, and score. Costs 1¢ per call."
 ---
 
 Once you have a chart slug from `GET /v1/charts`, use this endpoint to fetch its complete ranked leaderboard. Each entry in the response includes the fragrance's rank position, its unique identifier, display name, brand, and an aggregate Noteboxd score. You can use this data to build leaderboard UIs, embed "Top 10" modules in editorial content, or power recommendation carousels.

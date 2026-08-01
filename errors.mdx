@@ -1,7 +1,7 @@
 ---
-title: "API Error Codes and Troubleshooting Guide"
+title: "Noteboxd API Error Codes and Troubleshooting Guide"
 sidebarTitle: "Errors"
-description: "Reference for all Noteboxd API error codes, HTTP status codes, and recommended fixes when your requests fail."
+description: "Reference for all Noteboxd API error codes, HTTP status codes, and recommended fixes to apply when your API requests return 4xx or 5xx responses."
 ---
 
 When a Noteboxd API call fails, the response body contains a structured error object with a machine-readable `code` and a human-readable `message`. Use the `code` field in your application logic to branch on specific failure conditions — don't rely on the `message` string, as it may change. The optional `details` field provides additional context when available.

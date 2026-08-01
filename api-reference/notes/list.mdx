@@ -1,7 +1,7 @@
 ---
-title: "List Olfactory Notes — Browse by Family"
+title: "List All Olfactory Notes — Paginated Ingredient Browser"
 sidebarTitle: "List Notes"
-description: "GET /v1/notes — Browse and paginate through all olfactory notes in the Noteboxd database, optionally filtered by family."
+description: "GET /v1/notes — Paginate through all olfactory notes in the Noteboxd database. Each result includes a slug, display name, and olfactory family. Costs 1¢ per call."
 ---
 
 Notes are the individual olfactory ingredients used to describe a fragrance's scent profile — think bergamot, oud, rose, sandalwood, or vetiver. The Noteboxd database catalogs over 1,200 distinct notes, each classified by olfactory family. Use this endpoint to populate note pickers, build browsable ingredient libraries, or let users filter fragrances by the specific scents they love.
@@ -18,11 +18,11 @@ GET /v1/notes
 
 ## Query Parameters
 
-<ParamField query="page" type="integer" required>
+<ParamField query="page" type="integer">
   The page of results to return. Defaults to `1`.
 </ParamField>
 
-<ParamField query="limit" type="integer" required>
+<ParamField query="limit" type="integer">
   Number of notes to return per page. Defaults to `20`. Maximum `50`.
 </ParamField>
 

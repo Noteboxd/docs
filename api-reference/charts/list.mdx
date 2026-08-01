@@ -1,7 +1,7 @@
 ---
-title: "List Available Chart Rankings"
+title: "List All Available Fragrance Chart Rankings"
 sidebarTitle: "List Charts"
-description: "GET /v1/charts — Retrieve all available ranked chart slugs and their titles. Use slugs to fetch full leaderboards."
+description: "GET /v1/charts — Retrieve every available ranked chart as a slug-and-title pair. Use slugs with GET /v1/charts/{slug} to fetch full leaderboards. Costs 1¢ per call."
 ---
 
 Charts are curated ranked leaderboards maintained by the Noteboxd editorial team. This endpoint lists every available chart as a slug-and-title pair, giving you a complete map of what leaderboards exist before you fetch individual ones. Because new charts are added regularly — seasonal picks, community votes, genre deep-dives — you should call this endpoint dynamically rather than hardcoding a list of slugs in your application.
