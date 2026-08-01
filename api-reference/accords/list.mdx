@@ -1,0 +1,65 @@
+---
+title: "List Fragrance Accord Families"
+sidebarTitle: "List Accords"
+description: "GET /v1/accords — Retrieve all accord families used in fragrance classification, with names and slugs for filtering."
+---
+
+Accords are named blend families — woody, floral, oriental, fresh, gourmand, and more — that characterize a fragrance's overall scent profile. Unlike individual notes, which describe specific ingredients, accords describe the combined character of a composition. Each fragrance on Noteboxd carries one or more accords with relative strength values, making them excellent facets for discovery filters and scent-preference matching. Use this endpoint to fetch the full list of accord slugs and names you can display in your UI.
+
+## Endpoint
+
+```
+GET /v1/accords
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Query Parameters
+
+<ParamField query="page" type="integer" required>
+  The page of results to return. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer" required>
+  Number of accords to return per page. Defaults to `20`. Maximum `50`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl -G https://api.noteboxd.com/v1/accords \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  --data-urlencode "page=1" \
+  --data-urlencode "limit=20"
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    { "slug": "woody", "name": "Woody" },
+    { "slug": "floral", "name": "Floral" },
+    { "slug": "oriental", "name": "Oriental" },
+    { "slug": "fresh", "name": "Fresh" },
+    { "slug": "gourmand", "name": "Gourmand" }
+  ],
+  "pagination": { "page": 1, "limit": 20, "total": 47 }
+}
+```
+
+<Tip>
+  Accord `slug` and `name` values are stable identifiers — use them as display labels in faceted filters, fragrance profile UIs, or scent-preference onboarding flows. The `slug` is the machine-readable key; the `name` is the human-readable label ready for display.
+</Tip>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

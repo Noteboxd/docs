@@ -1,47 +1,65 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with the Noteboxd API"
+sidebarTitle: "Quickstart"
+description: "Learn how to authenticate and make your first Noteboxd API call in under five minutes with a working curl example."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+This page walks you through everything you need to go from zero to a live API response. You'll create a project, add a prepaid balance, and make your first search call — all in under five minutes. No SDK required; a terminal and your API key are all you need.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Create a project">
+    Sign in to the Noteboxd developer dashboard at [noteboxd.com/developers](https://www.noteboxd.com/developers). From the dashboard, create a new project — give it any name you like. Once created, navigate to the **Keys** section of the project and copy your API key. It will be prefixed with `nb_live_`.
 
-    ```bash
-    npm install your-package
-    ```
+    Keep this key safe. You'll pass it as a Bearer token in every request you make to the API.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
 
-    ```bash
-    your-cli init
-    ```
+  <Step title="Add a prepaid balance">
+    Noteboxd is billed pay-per-call. Before any request will succeed, you need to add a balance to your account. Head to the **Billing** section of the developer dashboard and top up your balance. The amount you add is held as credit, and each API call deducts the cost of that request automatically.
+
+    You can add any amount — even a few dollars is enough to get started and explore the API.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+
+  <Step title="Make your first search call">
+    With your key and balance in place, run the following `curl` command in your terminal. This calls the `/v1/search` endpoint and searches across all entity types for "Chanel No 5":
 
     ```bash
-    your-cli start
+    curl -G https://api.noteboxd.com/v1/search \
+      -H "Authorization: Bearer nb_live_YOUR_KEY" \
+      --data-urlencode "q=Chanel No 5" \
+      --data-urlencode "limit=5"
     ```
+
+    Replace `nb_live_YOUR_KEY` with the key you copied from your project's Keys section.
+  </Step>
+
+  <Step title="Read the response">
+    A successful response returns a `results` array containing matching fragrances, brands, notes, perfumers, and collections. Each result includes a `type` field so you know what kind of entity it is, along with its canonical `id`, `name`, and relevant metadata. Here's an example of what you'll see:
+
+    ```json
+    {
+      "results": [
+        {
+          "type": "fragrance",
+          "id": "chanel-no-5",
+          "name": "No 5",
+          "brand": "Chanel"
+        }
+      ]
+    }
+    ```
+
+    You can use the `id` from any result to look up the full record for that entity using the corresponding detail endpoint.
+  </Step>
+
+  <Step title="Explore further">
+    Now that you've made your first call, here are a few good places to go next:
+
+    - [Fragrances API reference](/api-reference/fragrances/list) — browse and filter the full fragrance catalog
+    - [Fragrance enrichment guide](/guides/fragrance-enrichment) — learn how to match and enrich existing product data in bulk
+    - [Pricing concepts](/concepts/pricing) — understand per-call costs and how to manage your balance
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
-
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+<Note>
+  Each API call costs 1¢ and is deducted automatically from your prepaid balance. Make sure your balance is topped up before running calls in production. You can monitor usage and add funds at any time from the [developer dashboard](https://www.noteboxd.com/developers).
+</Note>

@@ -1,0 +1,88 @@
+---
+title: "Get Fragrance — Full Profile with Notes and Accords"
+sidebarTitle: "Get Fragrance"
+description: "GET /v1/fragrances/{id} — Fetch a complete fragrance profile including notes, accords, community score, and perfumer attribution."
+---
+
+The **Get Fragrance** endpoint returns the complete profile for a single fragrance. The response includes structured note pyramids (top, middle, and base notes), accord fingerprints with strength scores, the community rating, year of release, and perfumer attribution. Use this endpoint whenever you need to display or process the full detail of a specific fragrance.
+
+## Endpoint
+
+```
+GET /v1/fragrances/{id}
+```
+
+**Cost:** 1¢ per call
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique fragrance identifier. You can obtain this value from the [List Fragrances](/api-reference/fragrances/list) endpoint or from a search result.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/fragrances/chanel-no-5 \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "id": "chanel-no-5",
+  "name": "No 5",
+  "brand": "Chanel",
+  "brandSlug": "chanel",
+  "perfumer": "Ernest Beaux",
+  "perfumerSlug": "ernest-beaux",
+  "year": 1921,
+  "score": 4.2,
+  "notes": {
+    "top": ["Aldehyde", "Bergamot", "Lemon"],
+    "middle": ["Rose", "Jasmine", "Iris"],
+    "base": ["Sandalwood", "Vetiver", "Musk"]
+  },
+  "accords": [
+    { "name": "Floral", "strength": 0.72 },
+    { "name": "Powdery", "strength": 0.41 }
+  ]
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique fragrance identifier. |
+| `name` | string | Display name of the fragrance. |
+| `brand` | string | Brand or house name. |
+| `brandSlug` | string | URL-safe slug for the brand. |
+| `perfumer` | string | Full name of the perfumer. |
+| `perfumerSlug` | string | URL-safe slug for the perfumer. |
+| `year` | integer | Year the fragrance was first released. |
+| `score` | float | Aggregate community rating out of 5.0. |
+| `notes.top` | array | Top notes — the initial impression upon application. |
+| `notes.middle` | array | Heart notes — the core character of the fragrance. |
+| `notes.base` | array | Base notes — the lasting dry-down. |
+| `accords[].name` | string | Name of the olfactive accord. |
+| `accords[].strength` | float | Relative strength of the accord, from `0.0` to `1.0`. |
+
+## Rate Limit Headers
+
+Every response includes the following headers:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Maximum number of requests allowed in the current window. |
+| `X-RateLimit-Remaining` | Number of requests remaining in the current window. |
+| `X-RateLimit-Reset` | Unix timestamp at which the rate limit window resets. |
+
+<Note>
+  If the requested `id` does not match any fragrance in the database, the API returns a `404` status with an error code of `NOT_FOUND`. Double-check that the ID was obtained from a valid list or search response.
+</Note>
+
+<Tip>
+  Need to fetch many fragrances at once? Use the [Batch](/api-reference/fragrances/batch) endpoint to retrieve up to 50 profiles in a single request at half the per-item cost.
+</Tip>

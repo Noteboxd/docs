@@ -1,0 +1,89 @@
+---
+title: "List Fragrance Reviews — Community Ratings"
+sidebarTitle: "Reviews"
+description: "GET /v1/fragrances/{id}/reviews — Retrieve paginated community reviews for a fragrance, including text and rating."
+---
+
+The **List Fragrance Reviews** endpoint returns paginated community reviews for a specific fragrance. Each review includes a numeric rating and optional written text submitted by Noteboxd members, along with the date it was posted. Use this endpoint to surface authentic community sentiment in your application, power recommendation widgets, or analyze user feedback at scale.
+
+## Endpoint
+
+```
+GET /v1/fragrances/{id}/reviews
+```
+
+**Cost:** 1¢ per call
+
+## Parameters
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique fragrance identifier. Obtain this from the [List Fragrances](/api-reference/fragrances/list) or search endpoints.
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page" type="integer" required default="1">
+  The page number to retrieve. Must be greater than or equal to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer" required default="20">
+  The number of reviews to return per page. Must be between `1` and `50` inclusive.
+</ParamField>
+
+## Example Request
+
+```bash
+curl -G https://api.noteboxd.com/v1/fragrances/chanel-no-5/reviews \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  --data-urlencode "page=1" \
+  --data-urlencode "limit=10"
+```
+
+## Example Response
+
+```json
+{
+  "fragranceId": "chanel-no-5",
+  "reviews": [
+    {
+      "rating": 4.5,
+      "text": "A timeless classic. The powdery floral is unmatched.",
+      "date": "2024-11-15"
+    }
+  ],
+  "pagination": { "page": 1, "limit": 10, "total": 3842 }
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `fragranceId` | string | The fragrance ID the reviews belong to. |
+| `reviews` | array | Array of review objects for the requested page. |
+| `reviews[].rating` | float | Reviewer's rating on a scale of `0.5` to `5.0`. |
+| `reviews[].text` | string \| null | Written review text. May be `null` if the reviewer submitted a rating only. |
+| `reviews[].date` | string | ISO 8601 date (`YYYY-MM-DD`) when the review was posted. |
+| `pagination.page` | integer | Current page number returned. |
+| `pagination.limit` | integer | Number of items per page used for this request. |
+| `pagination.total` | integer | Total number of reviews available for this fragrance. |
+
+## Rate Limit Headers
+
+Every response includes the following headers:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Maximum number of requests allowed in the current window. |
+| `X-RateLimit-Remaining` | Number of requests remaining in the current window. |
+| `X-RateLimit-Reset` | Unix timestamp at which the rate limit window resets. |
+
+<Note>
+  Reviews are sorted by date descending — the most recent reviews appear first. Pagination is stable for the duration of your session, but the ordering may shift between separate requests as new reviews are submitted.
+</Note>
+
+<Tip>
+  For a single-call bundle that includes reviews alongside the fragrance profile, notes, accords, and similar fragrances, consider using the [Enrich](/api-reference/fragrances/enrich) endpoint instead.
+</Tip>

@@ -1,0 +1,83 @@
+---
+title: "Authenticate with the Noteboxd API"
+sidebarTitle: "Authentication"
+description: "Noteboxd uses project API keys passed as a Bearer token. Learn how to get your key, pass it correctly, and handle auth errors."
+---
+
+Noteboxd authenticates every request using an API key passed in the `Authorization` header as a Bearer token. Keys are scoped to projects, so you can manage access and billing separately for each application you build. There are no OAuth flows or session cookies — just a single header on every request.
+
+## Getting your API key
+
+Your API key lives in the Noteboxd developer dashboard. To retrieve it:
+
+<Steps>
+  <Step title="Sign in to the developer dashboard">
+    Go to [noteboxd.com/developers](https://www.noteboxd.com/developers) and sign in with your Noteboxd account.
+  </Step>
+  <Step title="Create or open a project">
+    From the dashboard home, create a new project or click into an existing one. Each project has its own isolated API key and billing balance.
+  </Step>
+  <Step title="Copy your API key">
+    Navigate to the **Keys** section of the project. Your API key is displayed there — copy it and store it somewhere secure. All keys are prefixed with `nb_live_`.
+  </Step>
+</Steps>
+
+## Using your API key
+
+Pass your API key in the `Authorization` header of every request using the `Bearer` scheme:
+
+```bash
+Authorization: Bearer nb_live_YOUR_KEY
+```
+
+Here's a complete `curl` example that fetches the full record for a fragrance by its canonical ID:
+
+```bash
+curl https://api.noteboxd.com/v1/fragrances/chanel-no-5 \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+Replace `nb_live_YOUR_KEY` with your actual project key. Every endpoint in the Noteboxd API requires this header — requests without it will be rejected with a `401` error.
+
+## Security best practices
+
+<Warning>
+  Never expose your API key in client-side code, public repositories, or anywhere it could be read by third parties. If your key is compromised, rotate it immediately from the Keys section of your project dashboard.
+</Warning>
+
+Store your key in an environment variable and reference it in your code rather than hardcoding it:
+
+```bash
+export NOTEBOXD_API_KEY=nb_live_YOUR_KEY
+```
+
+```javascript
+const key = process.env.NOTEBOXD_API_KEY;
+```
+
+This keeps your key out of version control and makes it easy to rotate without changing your code.
+
+## Auth errors
+
+If something goes wrong with authentication, the API returns a JSON error response with a machine-readable `code` field. Here are the auth-related errors you may encounter:
+
+| Code | HTTP Status | Meaning |
+|---|---|---|
+| `MISSING_API_KEY` | 401 | No `Authorization` header was included in the request. |
+| `INVALID_API_KEY` | 401 | The key was malformed, has been revoked, or does not exist. |
+| `INSUFFICIENT_BALANCE` | 402 | The prepaid balance on the project is depleted. Top up to resume making calls. |
+
+All error responses follow the same shape:
+
+```json
+{
+  "error": {
+    "code": "INVALID_API_KEY",
+    "message": "The API key provided does not match any active project key."
+  }
+}
+```
+
+<Tip>
+  If you receive an `INSUFFICIENT_BALANCE` error, you can add funds immediately from the Billing section of your developer dashboard. See [Pricing](/concepts/pricing) for a full breakdown of per-call costs and tips on estimating and managing your balance.
+</Tip>

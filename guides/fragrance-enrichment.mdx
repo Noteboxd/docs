@@ -1,0 +1,87 @@
+---
+title: "Enrich Fragrance Data with Notes, Reviews, and Similar"
+sidebarTitle: "Enrichment"
+description: "Use the Noteboxd enrich endpoint to fetch a fragrance's full profile — notes, accords, community reviews, and similar fragrances — in a single API call."
+---
+
+The enrich endpoint bundles multiple data types — notes, accords, community reviews, and similar fragrances — into a single request, reducing both cost and latency compared to making several individual calls. Instead of orchestrating a chain of sequential fetches, you send one payload and receive everything you need in one response.
+
+## When to Use Enrichment
+
+Not every use case needs the full profile, so it's worth choosing the right approach for your situation.
+
+**Use `POST /v1/fragrances/enrich` when you need:**
+- Notes (top, middle, base) **and** accords **and** reviews **and** similar fragrances all at once
+- To build a detail page or full fragrance card in your UI
+- To minimize round trips in latency-sensitive environments
+
+**Use individual endpoints when you only need one or two data points:**
+- Fetching just the profile: `GET /v1/fragrances/{id}` at 1¢
+- Fetching just similar results: `GET /v1/fragrances/{id}/similar` at 2¢
+
+<Tip>
+  **Cost comparison:** The enrich endpoint costs **10¢** per call. Fetching the same data separately — profile (1¢) + accords (1¢) + similar (2¢) + reviews (1¢) — adds up to only **5¢**, but requires four round trips. Choose enrich when developer simplicity, lower latency, or atomic consistency matters more than the per-call price difference.
+</Tip>
+
+## Basic Enrichment Call
+
+Send a `POST` request with the fragrance `id` and optional limits for similar fragrances and reviews:
+
+```bash
+curl -X POST https://api.noteboxd.com/v1/fragrances/enrich \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"id": "chanel-no-5", "similarLimit": 5, "reviewLimit": 10}'
+```
+
+The response contains the full fragrance profile in a single object:
+
+```json
+{
+  "id": "chanel-no-5",
+  "name": "No 5",
+  "brand": "Chanel",
+  "notes": {
+    "top": ["Aldehyde", "Bergamot", "Lemon"],
+    "middle": ["Rose", "Jasmine", "Iris"],
+    "base": ["Sandalwood", "Vetiver", "Musk"]
+  },
+  "accords": [
+    { "name": "Floral", "strength": 0.72 },
+    { "name": "Powdery", "strength": 0.41 }
+  ],
+  "reviews": [...],
+  "similar": [...]
+}
+```
+
+The `notes` object is structured into pyramid layers (`top`, `middle`, `base`). The `accords` array represents the dominant olfactory families, each with a normalized strength between 0 and 1.
+
+## Request Body Fields
+
+<ParamField body="id" type="string" required>
+  The fragrance ID to enrich. You can obtain this from a `/v1/search` call or from any other endpoint that returns fragrance objects.
+</ParamField>
+
+<ParamField body="similarLimit" type="integer">
+  The number of similar fragrances to include in the response. Accepts values from `1` to `20`. Omit this field to exclude the `similar` array from the response.
+</ParamField>
+
+<ParamField body="reviewLimit" type="integer">
+  The number of community reviews to include in the response. Accepts values from `1` to `20`. Omit this field to exclude the `reviews` array from the response.
+</ParamField>
+
+## Batch Fetching Multiple Fragrances
+
+When you have multiple fragrance IDs and need their basic profiles, use `POST /v1/fragrances/batch` rather than looping over individual `GET /v1/fragrances/{id}` calls. You can fetch up to 50 fragrances in a single request:
+
+```bash
+curl -X POST https://api.noteboxd.com/v1/fragrances/batch \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"ids": ["chanel-no-5", "dior-sauvage", "creed-aventus"]}'
+```
+
+<Note>
+  The batch endpoint accepts between 1 and 50 fragrance IDs and costs a flat **25¢** per call — far more efficient than making 50 individual calls at 1¢ each (which would cost 50¢). Batch is ideal for populating list views, search result cards, and collection displays where you already have a set of IDs.
+</Note>

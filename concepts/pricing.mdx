@@ -1,0 +1,53 @@
+---
+title: "API Pricing: Pay-Per-Call and Prepaid Balance"
+sidebarTitle: "Pricing"
+description: "Noteboxd charges per API call billed against your prepaid balance. Learn per-endpoint costs, how billing works, and how to manage your balance."
+---
+
+Noteboxd uses a pay-per-call pricing model — there are no monthly subscriptions or seat fees. Instead, you top up a prepaid balance for your project and each API call deducts a small, fixed amount from that balance. You only pay for what you use, making it easy to get started at low volume and scale up as your needs grow.
+
+## How billing works
+
+Every successful API call deducts a fixed cost from your project's prepaid balance the moment the response is returned. A few things worth knowing:
+
+- **Failed calls are not charged.** Responses with a `4xx` or `5xx` status code (for example, validation errors, not-found responses, or server errors) do not deduct from your balance.
+- **Costs are fixed per endpoint.** The price of a call depends only on the endpoint you call, not on the size of the response or the number of results returned.
+- **Your balance is visible in the developer portal.** You can view your current balance, top it up, and review a full billing history at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers).
+
+## Per-endpoint costs
+
+| Endpoint | Cost |
+|---|---|
+| `GET /v1/search` | 1¢ |
+| `GET /v1/trending` | 1¢ |
+| `GET /v1/fragrances` | 1¢ |
+| `GET /v1/fragrances/{id}` | 1¢ |
+| `GET /v1/fragrances/{id}/reviews` | 1¢ |
+| `GET /v1/fragrances/{id}/similar` | 2¢ |
+| `GET /v1/fragrances/{id}/wearing-stats` | 2¢ |
+| `POST /v1/fragrances/batch` | 25¢ |
+| `POST /v1/fragrances/enrich` | 10¢ |
+| `GET /v1/brands/{slug}` | 1¢ |
+| `GET /v1/brands/{slug}/fragrances` | 1¢ |
+| `GET /v1/perfumers/{slug}` | 1¢ |
+| `GET /v1/notes` | 1¢ |
+| `GET /v1/notes/{slug}` | 1¢ |
+| `GET /v1/accords` | 1¢ |
+| `GET /v1/charts` | 1¢ |
+| `GET /v1/charts/{slug}` | 1¢ |
+
+## Cost-saving tips
+
+<Tip>
+  Batch and enrich endpoints dramatically reduce the number of individual calls you need to make. Combine them with local caching of stable data (such as brand profiles and note lists) to keep your costs as low as possible.
+</Tip>
+
+**Use `POST /v1/fragrances/batch` for bulk lookups.** If you need data for up to 50 fragrances at once, a single batch call costs 25¢ — far cheaper than 50 individual `GET /v1/fragrances/{id}` calls, which would cost 50¢ in total. Whenever you are hydrating a list of fragrances, reach for the batch endpoint first.
+
+**Use `POST /v1/fragrances/enrich` for deep fragrance pages.** The enrich endpoint returns a fragrance's notes, accords, reviews, and similar fragrances in a single response for 10¢. Fetching the same data with individual endpoint calls (`/similar`, `/wearing-stats`, `/reviews`, and `/fragrances/{id}`) would cost at least 5¢ and require four round trips. Use enrich whenever you are rendering a full fragrance detail page.
+
+**Cache data that rarely changes.** Brand profiles, perfumer profiles, the full notes list (`GET /v1/notes`), and the accords list (`GET /v1/accords`) are essentially static. Cache these responses locally — in memory, a database, or a CDN — and refresh them on a long TTL (for example, once per day) rather than fetching them on every request.
+
+## Insufficient balance
+
+If your prepaid balance reaches zero, subsequent API calls will be rejected with a `402 Payment Required` response and the error code `INSUFFICIENT_BALANCE`. Your integration should handle this error explicitly and alert the relevant team member to top up the balance at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers) before API access is restored.

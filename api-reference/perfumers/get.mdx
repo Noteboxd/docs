@@ -1,0 +1,58 @@
+---
+title: "Get Perfumer Profile and Top Creations"
+sidebarTitle: "Get Perfumer"
+description: "GET /v1/perfumers/{slug} — Retrieve a perfumer's profile, biography, and top-rated fragrance creations."
+---
+
+The perfumer profile endpoint returns biographical information about a fragrance creator alongside their highest-rated works on Noteboxd. Perfumers are the artists behind the scents, and surfacing their stories enriches fragrance content considerably — use this endpoint to build perfumer spotlight pages, add "Created by" attribution on fragrance detail views, or power explore-by-nose journeys through your catalog.
+
+## Endpoint
+
+```
+GET /v1/perfumers/{slug}
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Path Parameters
+
+<ParamField path="slug" type="string" required>
+  The unique identifier for the perfumer. Obtain perfumer slugs from the universal search endpoint using `type=perfumer`. Example: `francis-kurkdjian`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/perfumers/francis-kurkdjian \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "slug": "francis-kurkdjian",
+  "name": "Francis Kurkdjian",
+  "nationality": "French",
+  "bio": "Celebrated perfumer known for Baccarat Rouge 540 and his eponymous house.",
+  "topCreations": [
+    { "id": "mfk-baccarat-rouge-540", "name": "Baccarat Rouge 540", "brand": "Maison Francis Kurkdjian", "score": 4.6 }
+  ]
+}
+```
+
+<Note>
+  The `topCreations` array contains the perfumer's highest-scored works as rated by the Noteboxd community. A perfumer may have contributed to many more fragrances than are listed here — cross-reference with `GET /v1/search` using the perfumer's name for a broader view.
+</Note>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

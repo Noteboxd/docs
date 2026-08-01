@@ -1,0 +1,73 @@
+---
+title: "Noteboxd Data Model: Fragrances, Notes, and Accords"
+sidebarTitle: "Data Model"
+description: "Understand the core entities in the Noteboxd API — fragrances, brands, perfumers, notes, accords, and charts — and how they relate to each other."
+---
+
+The Noteboxd data model is built around a small set of interconnected entities that together describe the world of fragrance. Before you start making API calls, understanding how these entities relate to one another will help you design cleaner integrations, avoid unnecessary requests, and make sense of the data you receive in responses.
+
+## Core entities
+
+### Fragrance
+
+The fragrance is the central entity in the Noteboxd API. It represents a single scent product — a specific perfume, eau de toilette, or other olfactory release — and carries the richest set of fields of any entity. Each fragrance has a name, a parent brand, one or more notes organized into top, middle, and base layers, one or more accords with relative strengths, an overall community score, perfumer attribution, and aggregated community data such as reviews and wearing statistics.
+
+Fragrances are identified by a string `id` that follows a slug-like format (for example, `"creed-aventus"`).
+
+### Brand
+
+A brand represents the house or company responsible for producing fragrances — for example, Creed, Dior, or Byredo. Each brand has a profile page and a catalogue of associated fragrances. Brands are identified by a `slug` (for example, `"creed"`).
+
+### Perfumer
+
+A perfumer is the nose — the individual perfume creator — credited with formulating a fragrance. Each perfumer has a profile and a list of top creations. Like brands, perfumers are identified by a `slug` (for example, `"olivier-creed"`).
+
+### Note
+
+A note is an individual olfactory ingredient or perception that can be detected in a fragrance — for example, bergamot, vanilla, or oud. Notes are organized into three layers that reflect how they unfold over time on skin: **top** (the initial impression), **middle** (the heart of the fragrance), and **base** (the lasting dry-down). Notes are identified by a `slug` (for example, `"bergamot"`).
+
+### Accord
+
+An accord is a named blend or olfactory family that describes a fragrance's overall character — for example, woody, floral, or oriental. A fragrance typically has one or more accords, each carrying a relative strength value that indicates how prominently that character features. Accords are identified by a `slug` (for example, `"woody"`).
+
+### Chart
+
+A chart is a ranked leaderboard that surfaces fragrances ordered by a particular criterion — for example, top-rated fragrances of all time, most popular fragrances by season, or trending releases. Charts are identified by a `slug` (for example, `"top-rated-all-time"`).
+
+## Relationships
+
+The entities above form the following relationships:
+
+- **Fragrance → Brand** (many-to-one): each fragrance belongs to exactly one brand; a brand can produce many fragrances.
+- **Fragrance → Perfumer** (many-to-one): each fragrance is attributed to one perfumer; a perfumer can create many fragrances.
+- **Fragrance → Notes** (many-to-many): a fragrance contains multiple notes across top, middle, and base layers; a single note appears in many fragrances.
+- **Fragrance → Accords** (many-to-many): a fragrance has one or more accords with relative strengths; an accord describes many fragrances.
+
+```
+Brand  ←──(many-to-one)──  Fragrance  ──(many-to-one)──→  Perfumer
+                               │  │
+                (many-to-many) │  │ (many-to-many)
+                               ↓  ↓
+                           Notes   Accords
+```
+
+Charts do not have a direct foreign-key relationship with fragrances in the data model — instead, a chart response embeds a ranked list of fragrance summaries.
+
+## Identifiers
+
+Noteboxd uses two types of identifier, depending on the entity:
+
+| Entity | Identifier field | Example |
+|---|---|---|
+| Fragrance | `id` | `"creed-aventus"` |
+| Brand | `slug` | `"creed"` |
+| Perfumer | `slug` | `"olivier-creed"` |
+| Note | `slug` | `"bergamot"` |
+| Accord | `slug` | `"woody"` |
+| Chart | `slug` | `"top-rated-all-time"` |
+
+If you do not already know the identifier for an entity, you can discover it by calling `GET /v1/search` with a free-text query. Every item in the search results includes the relevant `id` or `slug` field that you can then use in subsequent requests.
+
+<Info>
+  Slugs are stable identifiers — they are designed not to change even if a brand, perfumer, or note's display name is updated. You can safely store slugs in your own database for long-term reference without worrying about them becoming stale.
+</Info>

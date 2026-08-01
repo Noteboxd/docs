@@ -1,0 +1,59 @@
+---
+title: "Get Note Profile and Top Fragrances"
+sidebarTitle: "Get Note"
+description: "GET /v1/notes/{slug} — Retrieve an olfactory note's profile, family, description, and top fragrances that feature it."
+---
+
+The note profile endpoint gives you a rich, detailed view of a single olfactory ingredient — its olfactory family classification, an editorial description of its scent character, and the top-rated Noteboxd fragrances that feature it prominently. Use this data to build note detail pages, enrich fragrance ingredient lists with educational context, or power "fragrances with this note" recommendation modules.
+
+## Endpoint
+
+```
+GET /v1/notes/{slug}
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Path Parameters
+
+<ParamField path="slug" type="string" required>
+  The unique identifier for the note. Obtain note slugs from `GET /v1/notes` or from the universal search endpoint using `type=note`. Example: `oud`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/notes/oud \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "slug": "oud",
+  "name": "Oud",
+  "family": "Woody",
+  "description": "Rich, dark resinous note derived from agarwood. Highly prized in Middle Eastern perfumery.",
+  "topFragrances": [
+    { "id": "initio-oud-for-greatness", "name": "Oud for Greatness", "brand": "Initio", "score": 4.5 },
+    { "id": "montale-black-aoud", "name": "Black Aoud", "brand": "Montale", "score": 4.3 }
+  ]
+}
+```
+
+<Note>
+  The `topFragrances` array surfaces the highest-rated Noteboxd fragrances that list this note in their pyramid. It is not an exhaustive list of every fragrance containing the note — use the universal search endpoint with `q={note name}` and `type=fragrance` for broader discovery.
+</Note>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

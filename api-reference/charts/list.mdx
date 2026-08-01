@@ -1,0 +1,54 @@
+---
+title: "List Available Chart Rankings"
+sidebarTitle: "List Charts"
+description: "GET /v1/charts — Retrieve all available ranked chart slugs and their titles. Use slugs to fetch full leaderboards."
+---
+
+Charts are curated ranked leaderboards maintained by the Noteboxd editorial team. This endpoint lists every available chart as a slug-and-title pair, giving you a complete map of what leaderboards exist before you fetch individual ones. Because new charts are added regularly — seasonal picks, community votes, genre deep-dives — you should call this endpoint dynamically rather than hardcoding a list of slugs in your application.
+
+## Endpoint
+
+```
+GET /v1/charts
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Parameters
+
+This endpoint takes no query parameters.
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/charts \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "charts": [
+    { "slug": "top-rated-all-time", "title": "Top Rated All Time" },
+    { "slug": "most-popular-this-week", "title": "Most Popular This Week" },
+    { "slug": "best-summer-fragrances", "title": "Best Summer Fragrances" }
+  ]
+}
+```
+
+<Note>
+  Use the `slug` values returned here with `GET /v1/charts/{slug}` to fetch the full ranked leaderboard for any individual chart.
+</Note>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

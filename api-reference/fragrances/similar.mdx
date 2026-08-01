@@ -1,0 +1,69 @@
+---
+title: "Similar Fragrances by Accord Profile"
+sidebarTitle: "Similar"
+description: "GET /v1/fragrances/{id}/similar — Find fragrances with a matching accord fingerprint, sorted by similarity score. Costs 2¢ per call."
+---
+
+The **Similar Fragrances** endpoint uses accord-based vector similarity to find fragrances that share the closest olfactive fingerprint with a given fragrance. Results are ranked by a `similarityScore` from `0.0` to `1.0`, where higher values indicate a closer accord match. This is useful for building "you might also like" recommendations, helping users discover alternatives, or suggesting affordable substitutes for expensive fragrances.
+
+## Endpoint
+
+```
+GET /v1/fragrances/{id}/similar
+```
+
+**Cost:** 2¢ per call
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique fragrance identifier to use as the similarity anchor. Obtain this from the [List Fragrances](/api-reference/fragrances/list) or search endpoints.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/fragrances/dior-sauvage/similar \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "id": "dior-sauvage",
+  "similar": [
+    { "id": "bleu-de-chanel", "name": "Bleu de Chanel", "brand": "Chanel", "similarityScore": 0.91 },
+    { "id": "ysl-y", "name": "Y", "brand": "Yves Saint Laurent", "similarityScore": 0.87 }
+  ]
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | The fragrance ID used as the similarity anchor. |
+| `similar` | array | Array of similar fragrances, sorted by `similarityScore` descending. |
+| `similar[].id` | string | Unique identifier of the similar fragrance. |
+| `similar[].name` | string | Display name of the similar fragrance. |
+| `similar[].brand` | string | Brand of the similar fragrance. |
+| `similar[].similarityScore` | float | Accord-based similarity score from `0.0` (no similarity) to `1.0` (identical accord profile). |
+
+## Rate Limit Headers
+
+Every response includes the following headers:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Maximum number of requests allowed in the current window. |
+| `X-RateLimit-Remaining` | Number of requests remaining in the current window. |
+| `X-RateLimit-Reset` | Unix timestamp at which the rate limit window resets. |
+
+<Warning>
+  This endpoint costs **2¢ per call** — double the standard rate — due to the computational overhead of accord-vector similarity search across the full catalogue. Plan your call volume accordingly if you are running similarity lookups in bulk.
+</Warning>
+
+<Tip>
+  For a deeper explanation of how accord fingerprints are constructed and how similarity scores are calculated, see the [Similarity Guide](/guides/similarity).
+</Tip>

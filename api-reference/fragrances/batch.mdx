@@ -1,0 +1,78 @@
+---
+title: "Batch Get Fragrances — Up to 50 IDs Per Call"
+sidebarTitle: "Batch"
+description: "POST /v1/fragrances/batch — Fetch up to 50 fragrance profiles in a single request. Costs 25¢ flat and is more efficient than individual lookups."
+---
+
+The **Batch Get Fragrances** endpoint is the most cost-efficient way to retrieve multiple fragrance profiles at once. Instead of making individual requests for each fragrance, you can submit up to 50 IDs in a single POST body and receive all matching profiles in one response. This is the recommended approach whenever you need to hydrate a list of IDs — for example, after receiving search results, syncing a user's collection, or pre-fetching catalogue data.
+
+## Endpoint
+
+```
+POST /v1/fragrances/batch
+```
+
+**Cost:** 25¢ flat per call (regardless of how many IDs you submit)
+
+## Cost Comparison
+
+| Approach | IDs | Cost |
+|---|---|---|
+| Individual `GET /v1/fragrances/{id}` calls | 50 | 50¢ |
+| `POST /v1/fragrances/batch` | 50 | **25¢** |
+
+Using batch for a full page of 50 results cuts your lookup cost in half.
+
+## Request Body
+
+<ParamField body="ids" type="string[]" required>
+  An array of fragrance IDs to look up. Must contain between `1` and `50` entries. IDs are the same slugs returned by the list and search endpoints (e.g. `"chanel-no-5"`).
+</ParamField>
+
+## Example Request
+
+```bash
+curl -X POST https://api.noteboxd.com/v1/fragrances/batch \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"ids": ["chanel-no-5", "dior-sauvage", "creed-aventus"]}'
+```
+
+## Example Response
+
+```json
+{
+  "fragrances": [
+    { "id": "chanel-no-5", "name": "No 5", "brand": "Chanel" },
+    { "id": "dior-sauvage", "name": "Sauvage", "brand": "Dior" },
+    { "id": "creed-aventus", "name": "Aventus", "brand": "Creed" }
+  ]
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `fragrances` | array | Array of fragrance profile objects for every matched ID. |
+| `fragrances[].id` | string | Unique fragrance identifier. |
+| `fragrances[].name` | string | Display name of the fragrance. |
+| `fragrances[].brand` | string | Brand or house that produces the fragrance. |
+
+## Rate Limit Headers
+
+Every response includes the following headers:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Maximum number of requests allowed in the current window. |
+| `X-RateLimit-Remaining` | Number of requests remaining in the current window. |
+| `X-RateLimit-Reset` | Unix timestamp at which the rate limit window resets. |
+
+<Note>
+  If one or more of the submitted IDs does not match any fragrance in the database, those IDs are silently omitted from the `fragrances` array. No error is thrown for partial misses. You can detect missing IDs by comparing the count of returned objects against your input array.
+</Note>
+
+<Warning>
+  Submitting an `ids` array with more than `50` entries will return a `422 Unprocessable Entity` error. Split large batches into chunks of 50 and make multiple calls if needed.
+</Warning>

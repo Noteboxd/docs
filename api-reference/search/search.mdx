@@ -1,0 +1,66 @@
+---
+title: "Universal Search — Fragrances, Brands, Notes, Perfumers"
+sidebarTitle: "Search"
+description: "GET /v1/search — Cross-entity keyword search returning fragrances, brands, notes, perfumers, and collections. Costs 1¢ per call."
+---
+
+The universal search endpoint lets you query the entire Noteboxd catalog with a single keyword string. Results are ranked by relevance and can span fragrances, brands, olfactory notes, perfumers, and curated collections. Use the optional `type` filter to narrow results to a single entity kind when you already know what you're looking for.
+
+## Endpoint
+
+```
+GET /v1/search
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Query Parameters
+
+<ParamField query="q" type="string" required>
+  The search query string. Must be at least 2 characters. Queries shorter than 2 characters return a `400 INVALID_QUERY` error.
+</ParamField>
+
+<ParamField query="type" type="string">
+  Filter results to a single entity type. Accepted values: `fragrance`, `note`, `brand`, `perfumer`, `collection`. When omitted, all entity types are returned.
+</ParamField>
+
+<ParamField query="limit" type="integer" required>
+  Maximum number of results to return. Defaults to `20`. Minimum `1`, maximum `25`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl -G https://api.noteboxd.com/v1/search \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  --data-urlencode "q=oud" \
+  --data-urlencode "type=fragrance" \
+  --data-urlencode "limit=5"
+```
+
+## Example Response
+
+```json
+{
+  "results": [
+    { "type": "fragrance", "id": "initio-oud-for-greatness", "name": "Oud for Greatness", "brand": "Initio" },
+    { "type": "fragrance", "id": "montale-black-aoud", "name": "Black Aoud", "brand": "Montale" }
+  ]
+}
+```
+
+<Note>
+  The `q` parameter must be at least 2 characters long. Submitting a single-character query — or an empty string — returns a `400` response with error code `INVALID_QUERY`.
+</Note>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

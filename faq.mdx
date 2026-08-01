@@ -1,0 +1,101 @@
+---
+title: "Frequently Asked Questions — Noteboxd API"
+sidebarTitle: "FAQ"
+description: "Common questions about the Noteboxd API: pricing, authentication, rate limits, data freshness, and more."
+---
+
+Answers to the most common questions developers have when integrating with the Noteboxd API. If your question isn't covered here, visit the developer portal at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers) for additional resources and support.
+
+<AccordionGroup>
+
+  <Accordion title="How much does each API call cost?">
+    Pricing depends on the endpoint you call:
+
+    | Endpoint type | Cost per call |
+    |---|---|
+    | Most endpoints | 1¢ |
+    | Similarity & wearing-stats | 2¢ |
+    | Enrich | 10¢ |
+    | Batch | 25¢ |
+
+    All costs are deducted automatically from your prepaid balance at the time of each successful request. You can monitor your usage and remaining balance in the [developer portal](https://www.noteboxd.com/developers).
+  </Accordion>
+
+  <Accordion title="How do I add credit to my account?">
+    Sign in at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers), navigate to the **Billing** section, and top up your prepaid balance using a credit or debit card. Credit is applied to your account instantly and any subsequent API calls will draw from the new balance.
+  </Accordion>
+
+  <Accordion title="What happens if my balance runs out mid-integration?">
+    Once your prepaid balance reaches zero, all API calls will return a `402 INSUFFICIENT_BALANCE` error. Your existing application code continues to run normally — only the API calls themselves will fail until you add more credit.
+
+    <Warning>
+      If you are running automated or high-volume workflows, consider setting up a low-balance alert in the developer portal to avoid unexpected disruptions.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="How do I find a fragrance's ID?">
+    Use the search endpoint with the fragrance name as the query parameter:
+
+    ```bash
+    GET /v1/search?q=<name>&type=fragrance
+    ```
+
+    The response will include a list of matching fragrances. Retrieve the `id` field from the result you want and store it for use in subsequent requests.
+  </Accordion>
+
+  <Accordion title="What is the difference between a `slug` and an `id`?">
+    Both are stable identifiers that you can safely store and reuse, but they apply to different resource types:
+
+    - **`id`** — used for **fragrances**
+    - **`slug`** — used for **brands**, **perfumers**, **notes**, and **charts**
+
+    Neither value changes after a resource is created, so you can persist them in your own database without worrying about them becoming stale.
+  </Accordion>
+
+  <Accordion title="How often is the data updated?">
+    Data freshness varies by type:
+
+    - **Fragrance profiles, notes, and accords** — curated continuously by the Noteboxd editorial team.
+    - **Community data** (reviews, wearing stats) — updates in near real-time as users submit new activity on the platform.
+
+    <Note>
+      If you cache API responses on your end, keep community data TTLs short (a few minutes to an hour) to avoid serving stale wearing stats or review counts.
+    </Note>
+  </Accordion>
+
+  <Accordion title="What is the daily rate limit?">
+    Rate limits vary depending on your plan. You can inspect the following response headers on any API call to see your current quota:
+
+    | Header | Description |
+    |---|---|
+    | `X-RateLimit-Limit` | Your total daily call allowance |
+    | `X-RateLimit-Remaining` | Calls remaining in the current window |
+    | `X-RateLimit-Reset` | Unix timestamp when the window resets |
+
+    The rate-limit window resets daily at **midnight UTC**. If you exceed your quota, requests will return `429 RATE_LIMIT_EXCEEDED` until the window resets.
+  </Accordion>
+
+  <Accordion title="Can I use the API in a client-side (browser) app?">
+    We strongly recommend **against** embedding your API key in client-side or mobile code. Anyone who inspects your JavaScript bundle or network traffic could extract the key and use your balance.
+
+    Instead, route all API calls through your own backend service and keep the key server-side. Your backend can proxy or aggregate requests as needed before returning data to the browser.
+
+    <Warning>
+      If you suspect your API key has been exposed, rotate it immediately in the developer portal. Rotated keys are invalidated within seconds.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Are failed calls charged?">
+    No — only successful responses are billed. Calls that return a `4xx` or `5xx` status code are generally **not deducted** from your prepaid balance. You only pay for requests that complete with a `2xx` response.
+  </Accordion>
+
+  <Accordion title="How do I get support?">
+    There are two ways to reach the Noteboxd developer support team:
+
+    1. **Developer portal** — visit [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers) and open a support ticket directly from your account dashboard.
+    2. **Email** — use the contact form in the portal to send a message to the developer support team.
+
+    When reporting an issue, include the full error response body (especially the `code` and `details` fields), the endpoint you were calling, and your approximate request timestamp to help the team investigate quickly.
+  </Accordion>
+
+</AccordionGroup>

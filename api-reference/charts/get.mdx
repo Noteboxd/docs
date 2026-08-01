@@ -1,0 +1,57 @@
+---
+title: "Get Chart Leaderboard by Slug"
+sidebarTitle: "Get Chart"
+description: "GET /v1/charts/{slug} — Retrieve the full ranked leaderboard for a specific chart. Returns ordered fragrance entries with rank and score."
+---
+
+Once you have a chart slug from `GET /v1/charts`, use this endpoint to fetch its complete ranked leaderboard. Each entry in the response includes the fragrance's rank position, its unique identifier, display name, brand, and an aggregate Noteboxd score. You can use this data to build leaderboard UIs, embed "Top 10" modules in editorial content, or power recommendation carousels.
+
+## Endpoint
+
+```
+GET /v1/charts/{slug}
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Path Parameters
+
+<ParamField path="slug" type="string" required>
+  The unique identifier for the chart. Obtain valid slugs from `GET /v1/charts`. Example: `top-rated-all-time`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/charts/top-rated-all-time \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "slug": "top-rated-all-time",
+  "title": "Top Rated All Time",
+  "entries": [
+    { "rank": 1, "id": "creed-aventus", "name": "Aventus", "brand": "Creed", "score": 4.7 },
+    { "rank": 2, "id": "chanel-no-5", "name": "No 5", "brand": "Chanel", "score": 4.2 }
+  ]
+}
+```
+
+<Warning>
+  If you pass a slug that does not match any known chart, the API returns a `404` response with error code `NOT_FOUND`. Always source slugs from `GET /v1/charts` to avoid stale or misspelled values.
+</Warning>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

@@ -1,20 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "name": "Noteboxd",
+  "projectType": "api-service",
+  "projectName": "Noteboxd",
+  "projectDescription": "A pay-per-call REST API providing fragrance, brand, note, perfumer, accord, and chart data for developers building fragrance-aware applications.",
   "theme": "luma",
-  "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
-  },
-  "favicon": "/favicon.svg",
-  "navbar": {
-    "primary": {
-      "type": "button",
-      "label": "Developer Portal",
-      "href": "https://www.noteboxd.com/developers"
-    }
-  },
+  "primaryColor": "#ef7025",
+  "lightColor": "#eec9bc",
+  "darkColor": "#4fa1ab",
   "navigation": {
     "tabs": [
       {
@@ -91,5 +82,38 @@
         ]
       }
     ]
-  }
+  },
+  "keyFeatures": [
+    "Universal cross-entity search across fragrances, brands, notes, perfumers, and collections",
+    "Detailed fragrance profiles with notes, accords, scores, and perfumer attribution",
+    "Similarity engine — find fragrances with matching accord profiles",
+    "Aggregate wearing stats including seasonal and mood data",
+    "Community reviews per fragrance (paginated)",
+    "Brand and perfumer catalogues with top-rated creations",
+    "Olfactory note and accord family browsing",
+    "Ranked chart leaderboards",
+    "Batch lookup for up to 50 fragrances in a single call",
+    "One-shot enrichment endpoint combining notes, accords, reviews, and similar fragrances",
+    "Pay-per-call pricing billed against a prepaid balance",
+    "Per-account daily rate-limit pool with standard rate-limit headers"
+  ],
+  "publicApiSurface": [
+    "GET /v1/search",
+    "GET /v1/trending",
+    "GET /v1/fragrances",
+    "GET /v1/fragrances/{id}",
+    "GET /v1/fragrances/{id}/reviews",
+    "GET /v1/fragrances/{id}/similar",
+    "GET /v1/fragrances/{id}/wearing-stats",
+    "POST /v1/fragrances/batch",
+    "POST /v1/fragrances/enrich",
+    "GET /v1/brands/{slug}",
+    "GET /v1/brands/{slug}/fragrances",
+    "GET /v1/perfumers/{slug}",
+    "GET /v1/notes",
+    "GET /v1/notes/{slug}",
+    "GET /v1/accords",
+    "GET /v1/charts",
+    "GET /v1/charts/{slug}"
+  ]
 }

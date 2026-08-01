@@ -1,0 +1,73 @@
+---
+title: "Rate Limits and Daily Call Quotas"
+sidebarTitle: "Rate Limits"
+description: "Noteboxd enforces a per-account daily rate limit. Learn how to read rate limit headers and handle 429 responses gracefully."
+---
+
+Every Noteboxd account is subject to a daily call limit that applies across all projects associated with that account. This shared quota resets at midnight UTC each day. Understanding how the rate limit works — and how to handle it gracefully in your code — will help you build integrations that remain reliable even under high traffic.
+
+<Warning>
+  Rate limits are enforced at the **account** level and are shared across all your projects. If you have multiple applications using API keys from the same Noteboxd account, their calls all count toward the same daily quota.
+</Warning>
+
+## Rate limit headers
+
+Every API response includes three headers that tell you exactly where you stand against your daily quota:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Your account's total daily call allowance. |
+| `X-RateLimit-Remaining` | The number of calls you have left in the current window. |
+| `X-RateLimit-Reset` | A Unix epoch timestamp indicating when the window resets (midnight UTC). |
+
+Here is what those headers look like on a typical response:
+
+```
+X-RateLimit-Limit: 10000
+X-RateLimit-Remaining: 9847
+X-RateLimit-Reset: 1735689600
+```
+
+You can convert the `X-RateLimit-Reset` value to a human-readable time by treating it as seconds since the Unix epoch — in the example above, `1735689600` corresponds to `2025-01-01T00:00:00Z`.
+
+## When you hit the limit
+
+Once `X-RateLimit-Remaining` reaches zero, the API will reject further calls with a `429 Too Many Requests` response until the window resets. The response body will have the following shape:
+
+```json
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Daily rate limit exceeded. Resets at 2025-01-01T00:00:00Z."
+  }
+}
+```
+
+The `message` field includes the human-readable reset time, which you can surface to operators or log for debugging. The `X-RateLimit-Reset` header is also present on `429` responses, so you always have the raw epoch value available for programmatic handling.
+
+## Handling 429s in code
+
+The recommended strategy for handling a `429` is to wait until the reset window passes before retrying, rather than using a short fixed back-off. The `X-RateLimit-Reset` header gives you the exact time to wait until, which makes the calculation straightforward:
+
+```javascript
+async function callWithRetry(url, options, maxRetries = 3) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.status !== 429) return res;
+    const resetAt = parseInt(res.headers.get('X-RateLimit-Reset'), 10) * 1000;
+    const waitMs = Math.max(resetAt - Date.now(), 1000);
+    await new Promise(r => setTimeout(r, waitMs));
+  }
+  throw new Error('Rate limit exceeded after retries');
+}
+```
+
+This function attempts the call up to `maxRetries` times. On a `429`, it reads the `X-RateLimit-Reset` header, calculates how many milliseconds remain until the reset, waits that long (with a floor of 1 second to guard against clock skew), and then retries. If all attempts are exhausted, it throws so the caller can handle the failure explicitly.
+
+## Best practices
+
+**Monitor `X-RateLimit-Remaining` proactively.** Rather than waiting to receive a `429`, read the `X-RateLimit-Remaining` header on every response and begin throttling your request rate — for example, by introducing a small delay between calls — as it approaches zero. This prevents hard failures in production and gives you time to react.
+
+**Use batch and enrich endpoints to reduce total call count.** `POST /v1/fragrances/batch` and `POST /v1/fragrances/enrich` each count as a single call against your quota regardless of how much data they return. Replacing many individual calls with a single batch or enrich call is the most effective way to stretch your daily allowance further.
+
+**Schedule high-volume jobs after the reset window.** If you run nightly data pipelines or large bulk exports, schedule them to start shortly after midnight UTC. This ensures they have the full daily quota available and are least likely to compete with interactive traffic from your application.

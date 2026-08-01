@@ -1,0 +1,100 @@
+---
+title: "Find Similar Fragrances by Accord Profile"
+sidebarTitle: "Similarity"
+description: "Use the Noteboxd similarity endpoint to discover fragrances with matching accord profiles — ideal for recommendation features and fragrance alternatives."
+---
+
+The `/v1/fragrances/{id}/similar` endpoint returns fragrances that share a similar accord profile, powered by Noteboxd's olfactory similarity engine. You can use it to build recommendation carousels, "you might also like" features, or tools that help users find alternatives to sold-out or discontinued scents.
+
+## How Similarity Works
+
+Similarity is computed from **accord vectors** — a numerical representation of the relative strength of accord families like woody, floral, oriental, fresh, and gourmand for each fragrance. Every fragrance in the Noteboxd database has an accord fingerprint derived from community data and expert curation.
+
+When you call the similarity endpoint, the engine compares the seed fragrance's accord vector against the full catalog and returns the closest matches ranked by cosine similarity. The `similarityScore` in each result is a value between 0 and 1: the closer to 1, the more aligned the two fragrances' accord profiles are. A score of `0.90+` typically indicates a near-identical olfactory character, while scores around `0.70` suggest a family resemblance with some meaningful differences.
+
+## Basic Similarity Call
+
+Pass the fragrance ID as a path parameter:
+
+```bash
+curl https://api.noteboxd.com/v1/fragrances/dior-sauvage/similar \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+```json
+{
+  "id": "dior-sauvage",
+  "similar": [
+    {
+      "id": "bleu-de-chanel",
+      "name": "Bleu de Chanel",
+      "brand": "Chanel",
+      "similarityScore": 0.91
+    },
+    {
+      "id": "ysl-y",
+      "name": "Y",
+      "brand": "Yves Saint Laurent",
+      "similarityScore": 0.87
+    }
+  ]
+}
+```
+
+The response always echoes back the `id` of the seed fragrance alongside the ranked `similar` array, making it easy to correlate results when you're handling multiple concurrent requests.
+
+## Building a Recommendation Feature
+
+The following steps walk you through a complete recommendation flow — from a user-supplied search term all the way to a set of rich fragrance profiles ready to display.
+
+<Steps>
+  <Step title="Search for the seed fragrance">
+    Use `/v1/search` with `type=fragrance` to find the fragrance your user has in mind and retrieve its `id`.
+  </Step>
+  <Step title="Fetch similar fragrances">
+    Call `/v1/fragrances/{id}/similar` with the `id` from step one to get a ranked list of similar fragrances and their IDs.
+  </Step>
+  <Step title="Batch-fetch full profiles">
+    Pass the returned `id` values to `POST /v1/fragrances/batch` to retrieve complete profiles for all recommendations in a single request.
+  </Step>
+</Steps>
+
+Here's the full flow in JavaScript:
+
+```javascript
+const headers = { Authorization: `Bearer ${process.env.NOTEBOXD_API_KEY}` };
+
+// Step 1: find the seed fragrance
+const searchRes = await fetch(
+  'https://api.noteboxd.com/v1/search?q=Dior+Sauvage&type=fragrance&limit=1',
+  { headers }
+);
+const { results } = await searchRes.json();
+const seedId = results[0].id;
+
+// Step 2: get similar fragrances
+const simRes = await fetch(
+  `https://api.noteboxd.com/v1/fragrances/${seedId}/similar`,
+  { headers }
+);
+const { similar } = await simRes.json();
+
+// Step 3: batch-fetch full profiles
+const batchRes = await fetch(
+  'https://api.noteboxd.com/v1/fragrances/batch',
+  {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids: similar.map(f => f.id).slice(0, 10) })
+  }
+);
+const fragrances = await batchRes.json();
+```
+
+<Note>
+  **Cost breakdown for this flow:** search (1¢) + similar (2¢) + batch of 10 profiles (25¢) = **~28¢ total** for a fully enriched set of 10 recommendations. If you need notes, accords, and reviews for each recommendation too, consider whether enriching each individually or adjusting your data model makes more sense for your use case.
+</Note>
+
+<Tip>
+  If you need the seed fragrance's full data — notes, accords, reviews, **and** similar fragrances — all in one shot, use `POST /v1/fragrances/enrich` with the `similarLimit` field set. This saves an extra round trip and costs a flat 10¢. See the [enrichment guide](/guides/fragrance-enrichment) for details.
+</Tip>

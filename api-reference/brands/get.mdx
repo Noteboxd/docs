@@ -1,0 +1,59 @@
+---
+title: "Get Brand Profile and Top Fragrances"
+sidebarTitle: "Get Brand"
+description: "GET /v1/brands/{slug} — Fetch a brand's profile including description, country, and its highest-rated fragrances."
+---
+
+The brand profile endpoint returns everything you need to present a fragrance house in your application: a human-readable name, country of origin, editorial description, and a curated list of the brand's highest-rated fragrances on Noteboxd. Use it to build brand landing pages, enrich fragrance cards with house context, or populate "About the Brand" sections in your UI.
+
+## Endpoint
+
+```
+GET /v1/brands/{slug}
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Path Parameters
+
+<ParamField path="slug" type="string" required>
+  The unique identifier for the brand. Obtain brand slugs from the universal search endpoint using `type=brand`. Example: `chanel`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/brands/chanel \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "slug": "chanel",
+  "name": "Chanel",
+  "country": "France",
+  "description": "Iconic French fashion and fragrance house founded in 1910.",
+  "topFragrances": [
+    { "id": "chanel-no-5", "name": "No 5", "score": 4.2 },
+    { "id": "chanel-chance", "name": "Chance", "score": 4.0 }
+  ]
+}
+```
+
+<Note>
+  The `topFragrances` array returns the brand's highest-scored fragrances, not its full catalogue. To paginate through every fragrance a brand offers, use `GET /v1/brands/{slug}/fragrances`.
+</Note>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

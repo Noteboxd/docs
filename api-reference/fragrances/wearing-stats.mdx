@@ -1,0 +1,84 @@
+---
+title: "Fragrance Wearing Stats — Seasons and Moods"
+sidebarTitle: "Wearing Stats"
+description: "GET /v1/fragrances/{id}/wearing-stats — Aggregate community wearing data: seasonal distribution, moods, occasions, and occasion tags."
+---
+
+The **Wearing Stats** endpoint aggregates how the Noteboxd community actually wears a given fragrance — which seasons they reach for it, the moods it evokes, and the occasions it suits best. All values are normalized scores derived from community logs, giving you a rich behavioural layer on top of the fragrance's raw chemical profile. Use this data to power context-aware recommendations, seasonal features, or occasion-based fragrance guides.
+
+## Endpoint
+
+```
+GET /v1/fragrances/{id}/wearing-stats
+```
+
+**Cost:** 2¢ per call
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique fragrance identifier. Obtain this from the [List Fragrances](/api-reference/fragrances/list) or search endpoints.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/fragrances/chanel-no-5/wearing-stats \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "fragranceId": "chanel-no-5",
+  "seasons": {
+    "spring": 0.28,
+    "summer": 0.18,
+    "fall": 0.31,
+    "winter": 0.23
+  },
+  "moods": [
+    { "label": "Elegant", "score": 0.85 },
+    { "label": "Romantic", "score": 0.72 }
+  ],
+  "occasions": [
+    { "label": "Evening", "score": 0.78 },
+    { "label": "Date Night", "score": 0.65 }
+  ]
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `fragranceId` | string | The fragrance ID these stats belong to. |
+| `seasons.spring` | float | Proportion of community logs tagged as spring, from `0.0` to `1.0`. |
+| `seasons.summer` | float | Proportion tagged as summer. |
+| `seasons.fall` | float | Proportion tagged as fall. |
+| `seasons.winter` | float | Proportion tagged as winter. |
+| `moods` | array | Ranked list of mood labels and their normalized scores. |
+| `moods[].label` | string | Human-readable mood label (e.g. `"Elegant"`, `"Playful"`). |
+| `moods[].score` | float | Normalized community agreement score from `0.0` to `1.0`. |
+| `occasions` | array | Ranked list of occasion labels and their normalized scores. |
+| `occasions[].label` | string | Human-readable occasion label (e.g. `"Evening"`, `"Office"`). |
+| `occasions[].score` | float | Normalized community agreement score from `0.0` to `1.0`. |
+
+## Rate Limit Headers
+
+Every response includes the following headers:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Maximum number of requests allowed in the current window. |
+| `X-RateLimit-Remaining` | Number of requests remaining in the current window. |
+| `X-RateLimit-Reset` | Unix timestamp at which the rate limit window resets. |
+
+<Note>
+  Season values across `spring`, `summer`, `fall`, and `winter` sum to approximately `1.0`. Minor floating-point variance is expected. Mood and occasion scores are independent and do not sum to any fixed total.
+</Note>
+
+<Warning>
+  This endpoint costs **2¢ per call** due to the aggregation query across community wearing logs. If you need wearing stats alongside the full fragrance profile, consider the [Enrich](/api-reference/fragrances/enrich) endpoint to consolidate your calls.
+</Warning>

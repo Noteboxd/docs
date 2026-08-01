@@ -1,0 +1,63 @@
+---
+title: "List Olfactory Notes — Browse by Family"
+sidebarTitle: "List Notes"
+description: "GET /v1/notes — Browse and paginate through all olfactory notes in the Noteboxd database, optionally filtered by family."
+---
+
+Notes are the individual olfactory ingredients used to describe a fragrance's scent profile — think bergamot, oud, rose, sandalwood, or vetiver. The Noteboxd database catalogs over 1,200 distinct notes, each classified by olfactory family. Use this endpoint to populate note pickers, build browsable ingredient libraries, or let users filter fragrances by the specific scents they love.
+
+## Endpoint
+
+```
+GET /v1/notes
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Query Parameters
+
+<ParamField query="page" type="integer" required>
+  The page of results to return. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer" required>
+  Number of notes to return per page. Defaults to `20`. Maximum `50`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl -G https://api.noteboxd.com/v1/notes \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  --data-urlencode "page=1" \
+  --data-urlencode "limit=20"
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    { "slug": "bergamot", "name": "Bergamot", "family": "Citrus" },
+    { "slug": "oud", "name": "Oud", "family": "Woody" },
+    { "slug": "rose", "name": "Rose", "family": "Floral" }
+  ],
+  "pagination": { "page": 1, "limit": 20, "total": 1240 }
+}
+```
+
+<Tip>
+  Each note in the list response includes a `slug` you can pass directly to `GET /v1/notes/{slug}` to retrieve its full profile, description, and top fragrances that feature it.
+</Tip>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

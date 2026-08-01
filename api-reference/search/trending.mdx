@@ -1,0 +1,58 @@
+---
+title: "Trending Queries and Fragrances"
+sidebarTitle: "Trending"
+description: "GET /v1/trending — Fetch currently trending queries, fragrances, and notes without needing a search term. Costs 1¢ per call."
+---
+
+The trending endpoint surfaces what's popular on Noteboxd right now — no search term required. It returns a live snapshot of the most-searched queries, the most-viewed fragrances, and the olfactory notes gaining traction with the community. This makes it ideal for powering homepage discovery widgets, editorial feeds, and seasonal content that needs to feel current without any manual curation.
+
+## Endpoint
+
+```
+GET /v1/trending
+```
+
+**Base URL:** `https://api.noteboxd.com`  
+**Cost:** 1¢ per call  
+**Authentication:** `Authorization: Bearer nb_live_YOUR_KEY`
+
+## Parameters
+
+This endpoint takes no query parameters.
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/trending \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+## Example Response
+
+```json
+{
+  "queries": ["oud", "spring fragrances", "gourmand"],
+  "fragrances": [
+    { "id": "dior-sauvage", "name": "Sauvage", "brand": "Dior" },
+    { "id": "creed-aventus", "name": "Aventus", "brand": "Creed" }
+  ],
+  "notes": [
+    { "slug": "oud", "name": "Oud" },
+    { "slug": "iris", "name": "Iris" }
+  ]
+}
+```
+
+<Tip>
+  Trending data refreshes periodically on the Noteboxd platform. Cache the response for 15–30 minutes on your end to avoid redundant calls and keep costs low — the data won't change meaningfully within that window.
+</Tip>
+
+## Rate Limiting
+
+Every response includes the following headers to help you track your usage:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining before you hit the limit |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |

@@ -1,0 +1,94 @@
+---
+title: "API Error Codes and Troubleshooting Guide"
+sidebarTitle: "Errors"
+description: "Reference for all Noteboxd API error codes, HTTP status codes, and recommended fixes when your requests fail."
+---
+
+When a Noteboxd API call fails, the response body contains a structured error object with a machine-readable `code` and a human-readable `message`. Use the `code` field in your application logic to branch on specific failure conditions — don't rely on the `message` string, as it may change. The optional `details` field provides additional context when available.
+
+## Error response format
+
+Every failed request returns a consistent JSON envelope:
+
+```json
+{
+  "error": {
+    "code": "INVALID_API_KEY",
+    "message": "The provided API key is not valid.",
+    "details": null
+  }
+}
+```
+
+## Error code reference
+
+| HTTP Status | Code | Meaning | Fix |
+|---|---|---|---|
+| 400 | `INVALID_QUERY` | A query parameter or request body is invalid | Check required parameters and data types |
+| 401 | `MISSING_API_KEY` | No `Authorization` header was sent | Add `Authorization: Bearer nb_live_...` |
+| 401 | `INVALID_API_KEY` | The key is malformed or unrecognized | Verify the key in your developer portal |
+| 402 | `INSUFFICIENT_BALANCE` | Your prepaid balance is zero | Top up at noteboxd.com/developers |
+| 404 | `NOT_FOUND` | The requested resource does not exist | Check the ID or slug is correct |
+| 429 | `RATE_LIMIT_EXCEEDED` | Daily call quota exhausted | Wait for reset (see `X-RateLimit-Reset` header) |
+| 500 | `INTERNAL_ERROR` | Unexpected server error | Retry with backoff; contact support if persistent |
+
+<Warning>
+  4xx errors are not retryable without first fixing the underlying issue. Only `429 RATE_LIMIT_EXCEEDED` and `500 INTERNAL_ERROR` responses should be retried — and only after addressing the root cause or waiting for the rate-limit window to reset.
+</Warning>
+
+## Handling errors in code
+
+The example below shows a practical pattern for catching and branching on Noteboxd error codes in JavaScript:
+
+```javascript
+const res = await fetch(
+  'https://api.noteboxd.com/v1/fragrances/unknown-id',
+  { headers: { Authorization: `Bearer ${process.env.NOTEBOXD_API_KEY}` } }
+);
+
+if (!res.ok) {
+  const { error } = await res.json();
+  switch (error.code) {
+    case 'MISSING_API_KEY':
+    case 'INVALID_API_KEY':
+      throw new Error('Check your API key configuration');
+    case 'INSUFFICIENT_BALANCE':
+      throw new Error('Top up your Noteboxd balance');
+    case 'RATE_LIMIT_EXCEEDED':
+      // retry after reset
+      break;
+    case 'NOT_FOUND':
+      // handle gracefully
+      break;
+    default:
+      throw new Error(`API error: ${error.message}`);
+  }
+}
+```
+
+<Tip>
+  The `X-RateLimit-Reset` response header contains a Unix timestamp indicating when your daily quota resets. Read this value before scheduling a retry so you don't waste calls.
+</Tip>
+
+## Retrying on 500 errors
+
+`INTERNAL_ERROR` responses indicate an unexpected problem on Noteboxd's servers. When you encounter one, retry the request using **exponential backoff** — for example, wait 1 second before the first retry, 2 seconds before the second, 4 seconds before the third, and so on.
+
+```javascript
+async function fetchWithRetry(url, options, maxRetries = 4) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.status !== 500) return res;
+
+    const delay = Math.pow(2, attempt) * 1000;
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+  throw new Error('Max retries reached — server error persisted');
+}
+```
+
+If `INTERNAL_ERROR` responses persist after several retries, please contact the Noteboxd developer support team at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers) with the request details and any error `details` from the response body.
+
+<Note>
+  Noteboxd does not bill you for failed requests. You will not be charged for calls that return a 4xx or 5xx response.
+</Note>

@@ -1,0 +1,42 @@
+---
+title: "Noteboxd: Fragrance Data API for Developers"
+sidebarTitle: "Introduction"
+description: "Noteboxd is a pay-per-call REST API for fragrance, brand, note, perfumer, accord, and chart data. Build discovery, recommendation, and enrichment features."
+---
+
+Noteboxd is a REST API that gives developers structured, queryable access to a deep catalog of fragrance data — including fragrances, brands, perfumers, notes, accords, and charts. Whether you're building a scent discovery app, enriching a product catalog, powering recommendation features, or analyzing fragrance trends, Noteboxd provides the data layer you need. It's designed to be simple to integrate, transparent to price, and reliable at any scale.
+
+## Key capabilities
+
+<CardGroup cols={2}>
+  <Card title="Fragrances" icon="spray-can-sparkles">
+    Access detailed records for thousands of fragrances — including names, brands, notes, accords, perfumers, release year, concentration, and more.
+  </Card>
+  <Card title="Search" icon="magnifying-glass">
+    Full-text search across fragrances, brands, notes, perfumers, and collections in a single endpoint. Great for autocomplete, discovery, and exploration features.
+  </Card>
+  <Card title="Brands & Perfumers" icon="building">
+    Query brand profiles and perfumer records independently. Retrieve the full catalog for any brand or explore a perfumer's body of work.
+  </Card>
+  <Card title="Notes & Accords" icon="leaf">
+    Look up individual notes and accords, browse fragrances that share a note family, or build features around olfactive categories.
+  </Card>
+  <Card title="Charts" icon="chart-bar">
+    Retrieve curated and community-generated fragrance charts — top-rated, trending, seasonal, and more. Useful for editorial and recommendation surfaces.
+  </Card>
+  <Card title="Batch & Enrichment" icon="layer-group">
+    Enrich your existing product data by resolving fragrance identifiers in bulk. Match names to canonical records and pull in structured metadata at scale.
+  </Card>
+</CardGroup>
+
+## What you'll need
+
+Before making your first API call, make sure you have the following:
+
+- **A Noteboxd developer account** — sign up or sign in at [noteboxd.com/developers](https://www.noteboxd.com/developers).
+- **A project API key** — keys are scoped to projects and are prefixed `nb_live_`. You can create a project and copy your key from the Keys section of the developer dashboard.
+- **A prepaid balance** — Noteboxd is billed pay-per-call. You'll need to add a balance from the Billing section before your requests will succeed. Calls cost between 1¢ and 25¢ each depending on the endpoint.
+
+## Next steps
+
+Once you have those in hand, head to the [Quickstart](/quickstart) to make your first API call in minutes, or jump straight to [Authentication](/authentication) to learn how to pass your key correctly and handle auth errors.
