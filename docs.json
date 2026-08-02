@@ -12,7 +12,7 @@
     "primary": {
       "type": "button",
       "label": "Developer Portal",
-      "href": "https://www.noteboxd.com/developers"
+      "href": "https://developers.noteboxd.com"
     }
   },
   "navigation": {

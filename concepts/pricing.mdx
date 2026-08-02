@@ -12,7 +12,7 @@ Every successful API call deducts a fixed cost from your project's prepaid balan
 
 - **Failed calls are not charged.** Responses with a `4xx` or `5xx` status code (for example, validation errors, not-found responses, or server errors) do not deduct from your balance.
 - **Costs are fixed per endpoint.** The price of a call depends only on the endpoint you call, not on the size of the response or the number of results returned.
-- **Your balance is visible in the developer portal.** You can view your current balance, top it up, and review a full billing history at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers).
+- **Your balance is visible in the developer portal.** You can view your current balance, top it up, and review a full billing history at [https://developers.noteboxd.com](https://developers.noteboxd.com).
 
 ## Per-endpoint costs
 
@@ -50,4 +50,4 @@ Every successful API call deducts a fixed cost from your project's prepaid balan
 
 ## Insufficient balance
 
-If your prepaid balance reaches zero, subsequent API calls will be rejected with a `402 Payment Required` response and the error code `INSUFFICIENT_BALANCE`. Your integration should handle this error explicitly and alert the relevant team member to top up the balance at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers) before API access is restored.
+If your prepaid balance reaches zero, subsequent API calls will be rejected with a `402 Payment Required` response and the error code `INSUFFICIENT_BALANCE`. Your integration should handle this error explicitly and alert the relevant team member to top up the balance at [https://developers.noteboxd.com](https://developers.noteboxd.com) before API access is restored.

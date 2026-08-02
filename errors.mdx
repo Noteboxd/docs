@@ -27,7 +27,7 @@ Every failed request returns a consistent JSON envelope:
 | 400 | `INVALID_QUERY` | A query parameter or request body is invalid | Check required parameters and data types |
 | 401 | `MISSING_API_KEY` | No `Authorization` header was sent | Add `Authorization: Bearer nb_live_...` |
 | 401 | `INVALID_API_KEY` | The key is malformed or unrecognized | Verify the key in your developer portal |
-| 402 | `INSUFFICIENT_BALANCE` | Your prepaid balance is zero | Top up at noteboxd.com/developers |
+| 402 | `INSUFFICIENT_BALANCE` | Your prepaid balance is zero | Top up at developers.noteboxd.com |
 | 404 | `NOT_FOUND` | The requested resource does not exist | Check the ID or slug is correct |
 | 429 | `RATE_LIMIT_EXCEEDED` | Daily call quota exhausted | Wait for reset (see `X-RateLimit-Reset` header) |
 | 500 | `INTERNAL_ERROR` | Unexpected server error | Retry with backoff; contact support if persistent |
@@ -87,7 +87,7 @@ async function fetchWithRetry(url, options, maxRetries = 4) {
 }
 ```
 
-If `INTERNAL_ERROR` responses persist after several retries, please contact the Noteboxd developer support team at [https://www.noteboxd.com/developers](https://www.noteboxd.com/developers) with the request details and any error `details` from the response body.
+If `INTERNAL_ERROR` responses persist after several retries, please contact the Noteboxd developer support team at [https://developers.noteboxd.com](https://developers.noteboxd.com) with the request details and any error `details` from the response body.
 
 <Note>
   Noteboxd does not bill you for failed requests. You will not be charged for calls that return a 4xx or 5xx response.
