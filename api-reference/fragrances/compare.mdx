@@ -1,0 +1,38 @@
+---
+title: "Compare Two Fragrances"
+sidebarTitle: "Compare"
+description: "GET /v1/fragrances/compare — Compare two fragrances by id: shared and distinct notes, accords, scores, and a written synthesis. Costs 3¢ per call."
+---
+
+Compare two fragrances in one call. The response covers shared and distinct notes, accords, and scores, plus a written synthesis of how the two scents differ.
+
+## Endpoint
+
+```
+GET /v1/fragrances/compare
+```
+
+**Cost:** 3¢ per call
+
+## Query Parameters
+
+<ParamField query="a" type="string" required>
+  First fragrance id.
+</ParamField>
+
+<ParamField query="b" type="string" required>
+  Second fragrance id. Must be different from `a`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl -G https://api.noteboxd.com/v1/fragrances/compare \
+  -H "Authorization: Bearer nb_live_YOUR_KEY" \
+  --data-urlencode "a=chanel-no-5" \
+  --data-urlencode "b=dior-sauvage"
+```
+
+<Note>
+  A call that returns `4xx` or `5xx` is not billed. See [Pricing](/concepts/pricing).
+</Note>

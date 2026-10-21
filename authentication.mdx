@@ -4,7 +4,7 @@ sidebarTitle: "Authentication"
 description: "Noteboxd uses project API keys passed as a Bearer token. Learn how to get your key, pass it correctly, and handle auth errors."
 ---
 
-Noteboxd authenticates every request using an API key passed in the `Authorization` header as a Bearer token. Keys are scoped to projects, so you can manage access and billing separately for each application you build. There are no OAuth flows or session cookies — just a single header on every request.
+Noteboxd authenticates every request using an API key passed in the `Authorization` header as a Bearer token. Keys are scoped to projects so you can separate access by application. Prepaid balance is one balance per account, shared by every project on that account. There are no OAuth flows or session cookies — just a single header on every request.
 
 ## Getting your API key
 
@@ -15,10 +15,10 @@ Your API key lives in the Noteboxd developer dashboard. To retrieve it:
     Go to [developers.noteboxd.com](https://developers.noteboxd.com) and sign in with your Noteboxd account.
   </Step>
   <Step title="Create or open a project">
-    From the dashboard home, create a new project or click into an existing one. Each project has its own isolated API key and billing balance.
+    From the dashboard home, create a new project or click into an existing one. Each project has its own API keys. Billing is not per project: every key on the account draws from the same prepaid balance.
   </Step>
-  <Step title="Copy your API key">
-    Navigate to the **Keys** section of the project. Your API key is displayed there — copy it and store it somewhere secure. All keys are prefixed with `nb_live_`.
+  <Step title="Copy your API key when it is created">
+    In the **Keys** section, create a key. The full secret is shown once, at creation, and is prefixed with `nb_live_`. Copy it then and store it somewhere secure. Opening the Keys section later does not reveal the secret again. If you lose it, create a new key and update your integration.
   </Step>
 </Steps>
 
@@ -65,7 +65,8 @@ If something goes wrong with authentication, the API returns a JSON error respon
 |---|---|---|
 | `MISSING_API_KEY` | 401 | No `Authorization` header was included in the request. |
 | `INVALID_API_KEY` | 401 | The key was malformed, has been revoked, or does not exist. |
-| `INSUFFICIENT_BALANCE` | 402 | The prepaid balance on the project is depleted. Top up to resume making calls. |
+| `INSUFFICIENT_BALANCE` | 402 | The account's prepaid balance is less than the cost of this call. Top up to resume that request. |
+| `WRONG_KEY_TYPE` | 401 | A hosted MCP or account key was sent to the commercial API, or a portal API key was sent to hosted MCP. Use the key type that matches the surface you are calling. |
 
 All error responses follow the same shape:
 

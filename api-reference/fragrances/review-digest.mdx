@@ -1,0 +1,34 @@
+---
+title: "Fragrance Review Digest"
+sidebarTitle: "Review Digest"
+description: "GET /v1/fragrances/{id}/review-digest — Short digest of a fragrance's community reviews. Costs 5¢ per call."
+---
+
+The review digest is a short summary of a fragrance's community reviews. Use it when you want the gist of the reviews without paging through [List reviews](/api-reference/fragrances/reviews).
+
+## Endpoint
+
+```
+GET /v1/fragrances/{id}/review-digest
+```
+
+**Cost:** 5¢ per call
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  Fragrance id or slug, for example `tom-ford/oud-wood`.
+</ParamField>
+
+## Example Request
+
+```bash
+curl https://api.noteboxd.com/v1/fragrances/chanel-no-5/review-digest \
+  -H "Authorization: Bearer nb_live_YOUR_KEY"
+```
+
+An unknown id returns `404 NOT_FOUND`.
+
+<Note>
+  A call that returns `4xx` or `5xx` is not billed. See [Pricing](/concepts/pricing).
+</Note>

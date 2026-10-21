@@ -1,10 +1,10 @@
 ---
-title: "List All Olfactory Notes — Paginated Ingredient Browser"
+title: "Browse Olfactory Notes"
 sidebarTitle: "List Notes"
-description: "GET /v1/notes — Paginate through all olfactory notes in the Noteboxd database. Each result includes a slug, display name, and olfactory family. Costs 1¢ per call."
+description: "GET /v1/notes — Browse notes filtered by family and sorted by popularity or name. Returns at most 50 notes per call. Costs 1¢ per call."
 ---
 
-Notes are the individual olfactory ingredients used to describe a fragrance's scent profile — think bergamot, oud, rose, sandalwood, or vetiver. The Noteboxd database catalogs over 1,200 distinct notes, each classified by olfactory family. Use this endpoint to populate note pickers, build browsable ingredient libraries, or let users filter fragrances by the specific scents they love.
+Notes are the olfactory ingredients used to describe a fragrance — bergamot, oud, rose, sandalwood, vetiver. This endpoint returns a bounded list you can filter by family and sort by popularity or name. It does not accept `page`, and it does not walk the entire note catalogue.
 
 ## Endpoint
 
@@ -18,12 +18,16 @@ GET /v1/notes
 
 ## Query Parameters
 
-<ParamField query="page" type="integer">
-  The page of results to return. Defaults to `1`.
+<ParamField query="family" type="string">
+  Optional family filter, for example `woody` or `floral`.
 </ParamField>
 
-<ParamField query="limit" type="integer">
-  Number of notes to return per page. Defaults to `20`. Maximum `50`.
+<ParamField query="sort" type="string" default="popular">
+  `popular` or `name`.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="20">
+  How many notes to return. Integer from `1` to `50`.
 </ParamField>
 
 ## Example Request
@@ -31,7 +35,8 @@ GET /v1/notes
 ```bash
 curl -G https://api.noteboxd.com/v1/notes \
   -H "Authorization: Bearer nb_live_YOUR_KEY" \
-  --data-urlencode "page=1" \
+  --data-urlencode "family=woody" \
+  --data-urlencode "sort=popular" \
   --data-urlencode "limit=20"
 ```
 
@@ -40,16 +45,15 @@ curl -G https://api.noteboxd.com/v1/notes \
 ```json
 {
   "data": [
-    { "slug": "bergamot", "name": "Bergamot", "family": "Citrus" },
     { "slug": "oud", "name": "Oud", "family": "Woody" },
-    { "slug": "rose", "name": "Rose", "family": "Floral" }
-  ],
-  "pagination": { "page": 1, "limit": 20, "total": 1240 }
+    { "slug": "sandalwood", "name": "Sandalwood", "family": "Woody" },
+    { "slug": "vetiver", "name": "Vetiver", "family": "Woody" }
+  ]
 }
 ```
 
 <Tip>
-  Each note in the list response includes a `slug` you can pass directly to `GET /v1/notes/{slug}` to retrieve its full profile, description, and top fragrances that feature it.
+  Pass a note `slug` to `GET /v1/notes/{slug}` for its profile and the fragrances that feature it.
 </Tip>
 
 ## Rate Limiting

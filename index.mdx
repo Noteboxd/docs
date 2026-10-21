@@ -23,14 +23,14 @@ The Noteboxd API gives you programmatic access to one of the most comprehensive 
 
 ## How it works
 
-Noteboxd uses a pay-per-call model. Each request costs between 1¢ and 25¢ and is billed against a prepaid balance tied to your project. There are no subscriptions — you top up your balance and spend only what you use.
+Noteboxd bills successful calls per endpoint. The free tier includes 50 calls per day with no card. Pay-as-you-go calls cost between 1¢ and 25¢ and are drawn from a prepaid balance. Failed calls are not billed.
 
 <Steps>
   <Step title="Create a project">
-    Sign in to the [Noteboxd developer portal](https://developers.noteboxd.com) and create a new project to receive your API key (`nb_live_...`).
+    Sign in to the [Noteboxd developer portal](https://developers.noteboxd.com), create a project, and create an API key (`nb_live_...`). Copy the secret when it is shown — it is not displayed again.
   </Step>
-  <Step title="Add a prepaid balance">
-    Top up your project's balance from the billing section of the portal. Calls are deducted automatically as you make requests.
+  <Step title="Call on the free tier, or add a balance">
+    The free tier covers 50 calls per day. For higher volume, add a prepaid balance. Successful pay-as-you-go calls are deducted automatically.
   </Step>
   <Step title="Make your first request">
     Pass your API key in the `Authorization: Bearer` header and query the API. See the [Quickstart](/quickstart) for a working example.

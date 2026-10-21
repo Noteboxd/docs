@@ -24,8 +24,8 @@ GET /v1/brands/{slug}/fragrances
 
 ## Query Parameters
 
-<ParamField query="page" type="integer">
-  The page of results to return. Defaults to `1`. Use in conjunction with `limit` to paginate through the full catalogue.
+<ParamField query="page" type="integer" default="1">
+  The page of results to return. Integer from `1` to `10000`. Use it with `limit` to paginate through the brand's catalogue.
 </ParamField>
 
 <ParamField query="limit" type="integer">
