@@ -31,7 +31,7 @@ Every failed request returns a consistent JSON envelope:
 | 402 | `INSUFFICIENT_BALANCE` | The account prepaid balance is zero | Top up at developers.noteboxd.com |
 | 404 | `NOT_FOUND` | The requested resource does not exist | Check the ID or slug is correct |
 | 429 | `RATE_LIMIT_EXCEEDED` | Call quota for the current window is exhausted | Wait for `Retry-After` seconds, or until `X-RateLimit-Reset` |
-| 429 | `RECORD_CAP_EXCEEDED` | Too many distinct records accessed today | Wait for `Retry-After` seconds before requesting further distinct records |
+| 429 | `RECORD_CAP_EXCEEDED` | Distinct-record cap for the UTC day is exhausted. Re-reads of records already accessed today do not count; chart leaderboards do not count | Wait until midnight UTC, or for `Retry-After` seconds |
 | 500 | `INTERNAL_ERROR` | Unexpected server error | Retry with backoff; contact support if persistent |
 
 Creating or rotating a key in the developer portal can also fail before a secret is issued. Those responses use the same error envelope:

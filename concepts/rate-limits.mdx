@@ -41,7 +41,7 @@ Treat `X-RateLimit-Reset` as seconds since the Unix epoch. In the example above,
 
 ## When you hit the limit
 
-Once you pass the call quota, the API rejects the call with `429 Too Many Requests` and `RATE_LIMIT_EXCEEDED`. A separate daily cap, `RECORD_CAP_EXCEEDED`, counts distinct records the account reads. Published caps are **50 distinct records per day** on the free plan and **400 distinct records per day** on Noteboxd Pro. Chart leaderboard responses do not count toward this cap. Both `429` responses include a `Retry-After` header with the number of seconds to wait. A call-quota response looks like this:
+Once you pass the call quota, the API rejects the call with `429 Too Many Requests` and `RATE_LIMIT_EXCEEDED`. Both `429` responses include a `Retry-After` header with the number of seconds to wait. A call-quota response looks like this:
 
 ```json
 {
@@ -53,6 +53,19 @@ Once you pass the call quota, the API rejects the call with `429 Too Many Reques
 ```
 
 Use `Retry-After` or `X-RateLimit-Reset` to decide when to retry. Do not parse the `message` string for the reset time.
+
+## Distinct records
+
+Each account also has a daily cap on distinct records. The window is a UTC day and resets at midnight UTC. Reading a record you already accessed earlier that day does not count again. Going past the cap returns `429` with `RECORD_CAP_EXCEEDED`. Chart leaderboards do not count toward the cap.
+
+| Plan | Distinct records / UTC day |
+|---|---|
+| Free | 50 |
+| Pay-as-you-go | 5,000 |
+| Noteboxd Pro (included API) | 400 |
+| Enterprise | No cap (set in the contract) |
+
+A new developer account starts at 60% of its plan cap and ramps in a straight line to the full cap over the first 7 days.
 
 ## Handling 429s in code
 
