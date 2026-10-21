@@ -16,7 +16,7 @@ This page walks you through everything you need to go from zero to a live API re
   <Step title="Start on the free tier">
     A new account can call the API on the free tier: **50 calls per day**, with no card and no prepaid balance. Those calls still count toward your account rate limit.
 
-    When you need more than the free allowance, switch to pay-as-you-go and add a prepaid balance from the **Billing** section. Successful calls then deduct that endpoint's price from the balance. Calls that return `4xx` or `5xx` are not charged.
+    When you need more than the free allowance, switch to pay-as-you-go and add a prepaid balance from the **Billing** section. Successful calls then deduct that endpoint's price from the balance. If the balance is less than the cost of a call, that call returns `402 INSUFFICIENT_BALANCE`. Calls that return `4xx` or `5xx` are not charged.
   </Step>
 
   <Step title="Make your first search call">

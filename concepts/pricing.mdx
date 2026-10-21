@@ -52,4 +52,4 @@ On pay-as-you-go, every successful API call deducts a fixed cost from your accou
 
 ## Insufficient balance
 
-If your prepaid balance reaches zero, subsequent API calls will be rejected with a `402 Payment Required` response and the error code `INSUFFICIENT_BALANCE`. Your integration should handle this error explicitly and alert the relevant team member to top up the balance at [https://developers.noteboxd.com](https://developers.noteboxd.com) before API access is restored.
+If your account's prepaid balance is less than the cost of a call, that call is rejected with `402 Payment Required` and `INSUFFICIENT_BALANCE`. The balance does not have to be zero. A 1¢ read can still succeed when a 25¢ batch cannot. Handle this error in your integration and top up at [https://developers.noteboxd.com](https://developers.noteboxd.com).

@@ -65,7 +65,7 @@ If something goes wrong with authentication, the API returns a JSON error respon
 |---|---|---|
 | `MISSING_API_KEY` | 401 | No `Authorization` header was included in the request. |
 | `INVALID_API_KEY` | 401 | The key was malformed, has been revoked, or does not exist. |
-| `INSUFFICIENT_BALANCE` | 402 | The account's prepaid balance is depleted. Top up to resume pay-as-you-go calls. |
+| `INSUFFICIENT_BALANCE` | 402 | The account's prepaid balance is less than the cost of this call. Top up to resume that request. |
 | `WRONG_KEY_TYPE` | 401 | A hosted MCP or account key was sent to the commercial API, or a portal API key was sent to hosted MCP. Use the key type that matches the surface you are calling. |
 
 All error responses follow the same shape:
