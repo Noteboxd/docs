@@ -68,7 +68,7 @@ Answers to the most common questions developers have when integrating with the N
   <Accordion title="What is the daily rate limit?">
     Limits are per account, shared by every key on that account. The free tier allows 50 calls per day. Pay-as-you-go allows 50,000 calls per day and 100 calls per second. Noteboxd Pro includes 2,000 calls per day. Enterprise limits are custom.
 
-    A `429` uses `RATE_LIMIT_EXCEEDED` when you pass a call quota, or `RECORD_CAP_EXCEEDED` when you access too many distinct records today. Both include a `Retry-After` header (seconds). You can also read:
+    A `429` uses `RATE_LIMIT_EXCEEDED` when you pass a call quota, or `RECORD_CAP_EXCEEDED` when you pass the distinct-record cap (50 records/day on the free plan, 400/day on Noteboxd Pro). Chart leaderboards do not count toward that cap. Both responses include a `Retry-After` header (seconds). You can also read:
 
     | Header | Description |
     |---|---|

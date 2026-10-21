@@ -27,14 +27,22 @@ Every failed request returns a consistent JSON envelope:
 | 400 | `INVALID_QUERY` | A query parameter or request body is invalid | Check required parameters and data types |
 | 401 | `MISSING_API_KEY` | No `Authorization` header was sent | Add `Authorization: Bearer nb_live_...` |
 | 401 | `INVALID_API_KEY` | The key is malformed or unrecognized | Verify the key in your developer portal |
-| 402 | `INSUFFICIENT_BALANCE` | Your prepaid balance is zero | Top up at developers.noteboxd.com |
+| 401 | `WRONG_KEY_TYPE` | A hosted MCP or account key was used on the commercial API, or a portal API key was used on hosted MCP | Send a portal API key to `api.noteboxd.com`. Send a hosted MCP key only to the hosted MCP endpoint |
+| 402 | `INSUFFICIENT_BALANCE` | The account prepaid balance is zero | Top up at developers.noteboxd.com |
 | 404 | `NOT_FOUND` | The requested resource does not exist | Check the ID or slug is correct |
 | 429 | `RATE_LIMIT_EXCEEDED` | Call quota for the current window is exhausted | Wait for `Retry-After` seconds, or until `X-RateLimit-Reset` |
 | 429 | `RECORD_CAP_EXCEEDED` | Too many distinct records accessed today | Wait for `Retry-After` seconds before requesting further distinct records |
 | 500 | `INTERNAL_ERROR` | Unexpected server error | Retry with backoff; contact support if persistent |
 
+Creating or rotating a key in the developer portal can also fail before a secret is issued. Those responses use the same error envelope:
+
+| HTTP Status | Code | Meaning | Fix |
+|---|---|---|---|
+| 403 | `EMAIL_UNVERIFIED` | The account email is not verified | Verify the email address, then create or rotate the key again |
+| 403 | `TERMS_NOT_ACCEPTED` | The account has not accepted the Terms | Accept the Terms in the developer portal, then create or rotate the key again |
+
 <Warning>
-  4xx errors are not retryable without first fixing the underlying issue. Only `429 RATE_LIMIT_EXCEEDED` and `500 INTERNAL_ERROR` responses should be retried — and only after addressing the root cause or waiting for the rate-limit window to reset.
+  4xx errors are not retryable without first fixing the underlying issue. Retry `429` (`RATE_LIMIT_EXCEEDED` or `RECORD_CAP_EXCEEDED`) only after `Retry-After`, and retry `500 INTERNAL_ERROR` with backoff.
 </Warning>
 
 ## Handling errors in code

@@ -4,11 +4,11 @@ sidebarTitle: "Pricing"
 description: "Noteboxd charges per API call billed against your prepaid balance. Learn per-endpoint costs, how billing works, and how to manage your balance."
 ---
 
-Noteboxd uses a pay-per-call pricing model — there are no monthly subscriptions or seat fees. Instead, you top up a prepaid balance for your project and each API call deducts a small, fixed amount from that balance. You only pay for what you use, making it easy to get started at low volume and scale up as your needs grow.
+Noteboxd uses a pay-per-call pricing model — there are no monthly subscriptions or seat fees. You top up one prepaid balance for your account. Every project and API key on that account draws from that same balance. You only pay for what you use, making it easy to get started at low volume and scale up as your needs grow.
 
 ## How billing works
 
-On pay-as-you-go, every successful API call deducts a fixed cost from your project's prepaid balance the moment the response is returned. The free tier (50 calls per day) does not require a balance. A few things worth knowing:
+On pay-as-you-go, every successful API call deducts a fixed cost from your account's prepaid balance the moment the response is returned. Projects do not have separate balances. The free tier (50 calls per day) does not require a balance. A few things worth knowing:
 
 - **Failed calls are not charged.** Responses with a `4xx` or `5xx` status code (for example, validation errors, not-found responses, or server errors) do not deduct from your balance.
 - **Costs are fixed per endpoint.** The price of a call depends only on the endpoint you call, not on the size of the response or the number of results returned.
