@@ -1,10 +1,12 @@
 ---
-title: "List Fragrances — Browse the Paginated Catalogue"
+title: "Search and Filter Fragrances"
 sidebarTitle: "List Fragrances"
-description: "GET /v1/fragrances — Browse all fragrances with pagination. Accepts page and limit parameters, returns an array of fragrance summaries."
+description: "GET /v1/fragrances — Filter fragrances by text, brand, note, family, or price range, and page the matches with a cursor. Costs 1¢ per call."
 ---
 
-The **List Fragrances** endpoint returns a paginated catalogue of every fragrance in the Noteboxd database. Each item in the response is a fragrance summary containing the unique ID, name, and brand — ideal for building browse interfaces, populating dropdowns, or syncing your local catalogue. Use the `page` and `limit` parameters to walk through the full dataset at your own pace.
+`GET /v1/fragrances` searches and filters the fragrance catalogue. It does not return the full catalogue page by page. Send at least one filter — `q`, `brand`, `note`, `family`, or `priceRange` — or the API responds with `400 INVALID_QUERY`. Walk a large result set by passing the previous response's `nextCursor` as `cursor`.
+
+For every fragrance from one house, use [List brand fragrances](/api-reference/brands/fragrances), which is page-numbered. For a keyword lookup across entity types, use [Search](/api-reference/search/search).
 
 ## Endpoint
 
@@ -16,20 +18,42 @@ GET /v1/fragrances
 
 ## Query Parameters
 
-<ParamField query="page" type="integer" required default="1">
-  The page number to retrieve. Must be greater than or equal to `1`.
+<ParamField query="q" type="string">
+  Free text matched against fragrance and brand names. 1–100 characters.
 </ParamField>
 
-<ParamField query="limit" type="integer" required default="20">
-  The number of fragrance summaries to return per page. Must be between `1` and `50` inclusive.
+<ParamField query="brand" type="string">
+  Brand slug, for example `chanel`.
 </ParamField>
+
+<ParamField query="note" type="string">
+  Note slug, for example `oud`.
+</ParamField>
+
+<ParamField query="family" type="string">
+  Olfactory family, for example `woody`.
+</ParamField>
+
+<ParamField query="priceRange" type="string">
+  One of `BUDGET`, `MIDRANGE`, or `PREMIUM`.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Cursor from the previous response's `nextCursor`. Omit it for the first page.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="20">
+  Page size. Integer from `1` to `50`.
+</ParamField>
+
+At least one of `q`, `brand`, `note`, `family`, or `priceRange` is required on every request, including requests that pass `cursor`.
 
 ## Example Request
 
 ```bash
 curl -G https://api.noteboxd.com/v1/fragrances \
   -H "Authorization: Bearer nb_live_YOUR_KEY" \
-  --data-urlencode "page=1" \
+  --data-urlencode "note=oud" \
   --data-urlencode "limit=20"
 ```
 
@@ -38,28 +62,24 @@ curl -G https://api.noteboxd.com/v1/fragrances \
 ```json
 {
   "data": [
-    { "id": "chanel-no-5", "name": "No 5", "brand": "Chanel" },
-    { "id": "dior-sauvage", "name": "Sauvage", "brand": "Dior" }
+    { "id": "initio-oud-for-greatness", "name": "Oud for Greatness", "brand": "Initio" },
+    { "id": "montale-black-aoud", "name": "Black Aoud", "brand": "Montale" }
   ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 45820
-  }
+  "nextCursor": "eyJ..."
 }
 ```
+
+Pass `nextCursor` back as `cursor` to fetch the next page. When `nextCursor` is `null` or absent, that page is the last one. There is no `page` parameter and no total count.
 
 ## Response Fields
 
 | Field | Type | Description |
 |---|---|---|
-| `data` | array | Array of fragrance summary objects for the requested page. |
-| `data[].id` | string | Unique fragrance identifier. Use this ID with other fragrance endpoints. |
-| `data[].name` | string | Display name of the fragrance. |
-| `data[].brand` | string | Brand or house that produces the fragrance. |
-| `pagination.page` | integer | The current page number returned. |
-| `pagination.limit` | integer | The number of items per page used for this request. |
-| `pagination.total` | integer | Total number of fragrances across all pages. |
+| `data` | array | Fragrance summaries for this page. |
+| `data[].id` | string | Fragrance id. Use it with other fragrance endpoints. |
+| `data[].name` | string | Display name. |
+| `data[].brand` | string | Brand or house name. |
+| `nextCursor` | string \| null | Cursor for the next page, or `null` when there are no further matches. |
 
 ## Rate Limit Headers
 
@@ -72,9 +92,5 @@ Every response includes the following headers:
 | `X-RateLimit-Reset` | Unix timestamp at which the rate limit window resets. |
 
 <Note>
-  This endpoint returns lightweight summary objects only. To retrieve full fragrance details — including notes, accords, and perfumer attribution — pass the `id` to [Get Fragrance](/api-reference/fragrances/get).
+  Each item is a summary. For notes, accords, and perfumer attribution, call [Get Fragrance](/api-reference/fragrances/get) with the `id`.
 </Note>
-
-<Tip>
-  If you need keyword-based filtering rather than full catalogue pagination, use the `/v1/search` endpoint instead. It supports full-text queries against fragrance names, brands, and notes.
-</Tip>

@@ -64,6 +64,8 @@
               "api-reference/fragrances/reviews",
               "api-reference/fragrances/similar",
               "api-reference/fragrances/wearing-stats",
+              "api-reference/fragrances/compare",
+              "api-reference/fragrances/review-digest",
               "api-reference/fragrances/batch",
               "api-reference/fragrances/enrich"
             ]

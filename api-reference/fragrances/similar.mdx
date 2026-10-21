@@ -17,7 +17,13 @@ GET /v1/fragrances/{id}/similar
 ## Path Parameters
 
 <ParamField path="id" type="string" required>
-  The unique fragrance identifier to use as the similarity anchor. Obtain this from the [List Fragrances](/api-reference/fragrances/list) or search endpoints.
+  The unique fragrance identifier to use as the similarity anchor. Obtain this from [search](/api-reference/search/search) or a filtered [fragrance query](/api-reference/fragrances/list).
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="limit" type="integer" default="12">
+  How many similar fragrances to return. Integer from `1` to `50`.
 </ParamField>
 
 ## Example Request

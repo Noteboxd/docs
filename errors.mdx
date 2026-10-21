@@ -29,7 +29,8 @@ Every failed request returns a consistent JSON envelope:
 | 401 | `INVALID_API_KEY` | The key is malformed or unrecognized | Verify the key in your developer portal |
 | 402 | `INSUFFICIENT_BALANCE` | Your prepaid balance is zero | Top up at developers.noteboxd.com |
 | 404 | `NOT_FOUND` | The requested resource does not exist | Check the ID or slug is correct |
-| 429 | `RATE_LIMIT_EXCEEDED` | Daily call quota exhausted | Wait for reset (see `X-RateLimit-Reset` header) |
+| 429 | `RATE_LIMIT_EXCEEDED` | Call quota for the current window is exhausted | Wait for `Retry-After` seconds, or until `X-RateLimit-Reset` |
+| 429 | `RECORD_CAP_EXCEEDED` | Too many distinct records accessed today | Wait for `Retry-After` seconds before requesting further distinct records |
 | 500 | `INTERNAL_ERROR` | Unexpected server error | Retry with backoff; contact support if persistent |
 
 <Warning>
@@ -67,7 +68,7 @@ if (!res.ok) {
 ```
 
 <Tip>
-  The `X-RateLimit-Reset` response header contains a Unix timestamp indicating when your daily quota resets. Read this value before scheduling a retry so you don't waste calls.
+  On a `429`, the `Retry-After` header is the number of seconds to wait. `X-RateLimit-Reset` is the Unix timestamp when the current window resets. The code is either `RATE_LIMIT_EXCEEDED` or `RECORD_CAP_EXCEEDED`.
 </Tip>
 
 ## Retrying on 500 errors

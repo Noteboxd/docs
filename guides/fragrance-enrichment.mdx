@@ -64,11 +64,11 @@ The `notes` object is structured into pyramid layers (`top`, `middle`, `base`). 
 </ParamField>
 
 <ParamField body="similarLimit" type="integer">
-  The number of similar fragrances to include in the response. Accepts values from `1` to `20`. Omit this field to exclude the `similar` array from the response.
+  How many similar fragrances to include. Integer from `1` to `20`. Defaults to `10` when omitted.
 </ParamField>
 
 <ParamField body="reviewLimit" type="integer">
-  The number of community reviews to include in the response. Accepts values from `1` to `20`. Omit this field to exclude the `reviews` array from the response.
+  How many community reviews to include. Integer from `1` to `20`. Defaults to `10` when omitted.
 </ParamField>
 
 ## Batch Fetching Multiple Fragrances

@@ -4,19 +4,19 @@ sidebarTitle: "Quickstart"
 description: "Learn how to authenticate and make your first Noteboxd API call in under five minutes with a working curl example."
 ---
 
-This page walks you through everything you need to go from zero to a live API response. You'll create a project, add a prepaid balance, and make your first search call — all in under five minutes. No SDK required; a terminal and your API key are all you need.
+This page walks you through everything you need to go from zero to a live API response. You'll create a project, copy your API key, and make your first search call — all in under five minutes. No SDK required; a terminal and your API key are all you need.
 
 <Steps>
   <Step title="Create a project">
-    Sign in to the Noteboxd developer dashboard at [developers.noteboxd.com](https://developers.noteboxd.com). From the dashboard, create a new project — give it any name you like. Once created, navigate to the **Keys** section of the project and copy your API key. It will be prefixed with `nb_live_`.
+    Sign in to the Noteboxd developer dashboard at [developers.noteboxd.com](https://developers.noteboxd.com). From the dashboard, create a new project — give it any name you like. In the **Keys** section, create an API key. The full secret is shown once and is prefixed with `nb_live_`. Copy it before you leave the screen. The dashboard does not show that secret again.
 
     Keep this key safe. You'll pass it as a Bearer token in every request you make to the API.
   </Step>
 
-  <Step title="Add a prepaid balance">
-    Noteboxd is billed pay-per-call. Before any request will succeed, you need to add a balance to your account. Head to the **Billing** section of the developer dashboard and top up your balance. The amount you add is held as credit, and each API call deducts the cost of that request automatically.
+  <Step title="Start on the free tier">
+    A new account can call the API on the free tier: **50 calls per day**, with no card and no prepaid balance. Those calls still count toward your account rate limit.
 
-    You can add any amount — even a few dollars is enough to get started and explore the API.
+    When you need more than the free allowance, switch to pay-as-you-go and add a prepaid balance from the **Billing** section. Successful calls then deduct that endpoint's price from the balance. Calls that return `4xx` or `5xx` are not charged.
   </Step>
 
   <Step title="Make your first search call">
@@ -54,12 +54,12 @@ This page walks you through everything you need to go from zero to a live API re
   <Step title="Explore further">
     Now that you've made your first call, here are a few good places to go next:
 
-    - [Fragrances API reference](/api-reference/fragrances/list) — browse and filter the full fragrance catalog
+    - [Fragrances API reference](/api-reference/fragrances/list) — filter fragrances and page the matches with a cursor
     - [Fragrance enrichment guide](/guides/fragrance-enrichment) — learn how to match and enrich existing product data in bulk
     - [Pricing concepts](/concepts/pricing) — understand per-call costs and how to manage your balance
   </Step>
 </Steps>
 
 <Note>
-  Each API call costs 1¢ and is deducted automatically from your prepaid balance. Make sure your balance is topped up before running calls in production. You can monitor usage and add funds at any time from the [developer dashboard](https://developers.noteboxd.com).
+  Free-tier calls are not drawn from a balance. On pay-as-you-go, only successful (`2xx`) calls are deducted, and the price depends on the endpoint (most reads are 1¢). Failed calls (`4xx` and `5xx`) are not billed. Monitor usage from the [developer dashboard](https://developers.noteboxd.com).
 </Note>

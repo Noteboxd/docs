@@ -8,7 +8,7 @@ Noteboxd uses a pay-per-call pricing model — there are no monthly subscription
 
 ## How billing works
 
-Every successful API call deducts a fixed cost from your project's prepaid balance the moment the response is returned. A few things worth knowing:
+On pay-as-you-go, every successful API call deducts a fixed cost from your project's prepaid balance the moment the response is returned. The free tier (50 calls per day) does not require a balance. A few things worth knowing:
 
 - **Failed calls are not charged.** Responses with a `4xx` or `5xx` status code (for example, validation errors, not-found responses, or server errors) do not deduct from your balance.
 - **Costs are fixed per endpoint.** The price of a call depends only on the endpoint you call, not on the size of the response or the number of results returned.
@@ -25,6 +25,8 @@ Every successful API call deducts a fixed cost from your project's prepaid balan
 | `GET /v1/fragrances/{id}/reviews` | 1¢ |
 | `GET /v1/fragrances/{id}/similar` | 2¢ |
 | `GET /v1/fragrances/{id}/wearing-stats` | 2¢ |
+| `GET /v1/fragrances/compare` | 3¢ |
+| `GET /v1/fragrances/{id}/review-digest` | 5¢ |
 | `POST /v1/fragrances/batch` | 25¢ |
 | `POST /v1/fragrances/enrich` | 10¢ |
 | `GET /v1/brands/{slug}` | 1¢ |
@@ -44,7 +46,7 @@ Every successful API call deducts a fixed cost from your project's prepaid balan
 
 **Use `POST /v1/fragrances/batch` for bulk lookups.** If you need data for up to 50 fragrances at once, a single batch call costs 25¢ — far cheaper than 50 individual `GET /v1/fragrances/{id}` calls, which would cost 50¢ in total. Whenever you are hydrating a list of fragrances, reach for the batch endpoint first.
 
-**Use `POST /v1/fragrances/enrich` for deep fragrance pages.** The enrich endpoint returns a fragrance's notes, accords, reviews, and similar fragrances in a single response for 10¢. Fetching the same data with individual endpoint calls (`/similar`, `/wearing-stats`, `/reviews`, and `/fragrances/{id}`) would cost at least 5¢ and require four round trips. Use enrich whenever you are rendering a full fragrance detail page.
+**Use `POST /v1/fragrances/enrich` for deep fragrance pages.** The enrich endpoint returns a fragrance's notes, accords, reviews, and similar fragrances in a single response for 10¢. It does not include wearing stats. Fetching the profile, similar fragrances, and reviews separately costs 4¢ and takes three round trips. Use enrich when you want those fields in one response. Wearing stats are a separate 2¢ call.
 
 **Cache data that rarely changes.** Brand profiles, perfumer profiles, the full notes list (`GET /v1/notes`), and the accords list (`GET /v1/accords`) are essentially static. Cache these responses locally — in memory, a database, or a CDN — and refresh them on a long TTL (for example, once per day) rather than fetching them on every request.
 

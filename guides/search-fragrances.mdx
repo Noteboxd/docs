@@ -65,7 +65,7 @@ Filtering by type also tends to improve result relevance — a search for "Sauva
 
 The `limit` parameter accepts any integer between `1` and `25`. There is no offset-based pagination on the search endpoint itself — it is designed for relevance-ranked, top-N lookups.
 
-If you need to page through a larger dataset (for example, all fragrances by a specific brand), use the `/v1/fragrances` listing endpoint, which supports cursor-based pagination. Use `/v1/search` for discovery, and the dedicated listing endpoints for exhaustive retrieval.
+`GET /v1/fragrances` is a filtered search, not a walk of the whole catalogue. It requires at least one of `q`, `brand`, `note`, `family`, or `priceRange`, then continues with `cursor` / `nextCursor`. To page through every fragrance for one house, use `GET /v1/brands/{slug}/fragrances`, which accepts `page` and `limit`. Use `/v1/search` for cross-entity discovery.
 
 ## Using Search Results
 
